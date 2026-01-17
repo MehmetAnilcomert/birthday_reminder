@@ -1,0 +1,82 @@
+name: birthday_reminder
+description: "Birthday Reminder App with Firebase"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
+  
+  # Firebase
+  firebase_core: ^3.10.0
+  firebase_auth: ^5.3.3
+  cloud_firestore: ^5.5.0
+  firebase_messaging: ^15.1.7
+  
+  # Local Storage
+  shared_preferences: ^2.3.4
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  
+  # Network & Utilities
+  dio: ^5.7.0
+  connectivity_plus: ^6.1.1
+  
+  # UI & Navigation
+  auto_route: ^9.2.3
+  flutter_svg: ^2.0.10+1
+  cached_network_image: ^3.4.1
+  
+  # Localization
+  easy_localization: ^3.0.8
+
+  
+  # Date Handling
+  jiffy: ^6.3.1
+  
+  # Functional
+  dartz: ^0.10.1
+  
+  # Service Locator
+  get_it: ^8.0.3
+  injectable: ^2.5.0
+  
+  # Json Serialization
+  json_annotation: ^4.9.0
+  
+  # Environment
+  flutter_dotenv: ^5.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  
+  # Code Generation
+  build_runner: ^2.4.15
+  json_serializable: ^6.8.0
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/translations/
+    - assets/images/
+  
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
