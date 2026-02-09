@@ -120,4 +120,16 @@ class AuthRepository {
         return 'Bir hata oluştu';
     }
   }
+
+  Future<void> updateFcmToken(String userId, String token) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'fcmToken': token,
+        'fcmTokenUpdatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      // Log error but don't fail the app
+      print('Error updating FCM token: $e');
+    }
+  }
 }

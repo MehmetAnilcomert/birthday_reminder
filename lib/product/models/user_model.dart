@@ -9,6 +9,7 @@ class UserModel extends Equatable {
   final String id;
   final String email;
   final String? displayName;
+  final String? fcmToken;
   @ProductTimestampConverter()
   final DateTime createdAt;
 
@@ -16,6 +17,7 @@ class UserModel extends Equatable {
     required this.id,
     required this.email,
     this.displayName,
+    this.fcmToken,
     required this.createdAt,
   });
 
@@ -28,16 +30,18 @@ class UserModel extends Equatable {
     String? id,
     String? email,
     String? displayName,
+    String? fcmToken,
     DateTime? createdAt,
   }) {
     return UserModel(
       id: id ?? this.id,
       email: email ?? this.email,
       displayName: displayName ?? this.displayName,
+      fcmToken: fcmToken ?? this.fcmToken,
       createdAt: createdAt ?? this.createdAt,
     );
   }
 
   @override
-  List<Object?> get props => [id, email, displayName, createdAt];
+  List<Object?> get props => [id, email, displayName, fcmToken, createdAt];
 }

@@ -19,6 +19,7 @@ dependencies:
   firebase_auth: ^5.3.3
   cloud_firestore: ^5.5.0
   firebase_messaging: ^15.1.7
+  flutter_local_notifications: ^18.0.1
   
   # Local Storage
   shared_preferences: ^2.3.4
@@ -59,6 +60,7 @@ dependencies:
   # modules
   common: 
     path: module/common
+
   
   # 
 

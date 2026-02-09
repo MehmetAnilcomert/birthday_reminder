@@ -2,6 +2,8 @@ import 'package:birthday_reminder/product/service/manager/product_network_manage
 import 'package:birthday_reminder/product/state/view_model/product_view_model.dart';
 import 'package:birthday_reminder/feature/auth/view_model/auth_view_model.dart';
 import 'package:birthday_reminder/product/cache/product_preferences.dart';
+import 'package:birthday_reminder/product/service/notification/firebase_notification_service.dart';
+import 'package:birthday_reminder/product/service/notification/notification_service.dart';
 import 'package:get_it/get_it.dart';
 
 /// A container class for managing product state instances.
@@ -18,7 +20,8 @@ final class ProductContainer {
       ..registerSingleton(ProductNetworkManager.base())
       ..registerSingleton(ProductPreferences())
       ..registerLazySingleton(ProductViewModel.new)
-      ..registerLazySingleton(AuthViewModel.new);
+      ..registerLazySingleton(AuthViewModel.new)
+      ..registerSingleton<INotificationService>(FirebaseNotificationService());
   }
 
   /// Reads an instance of type [T] from the service locator then returns it.

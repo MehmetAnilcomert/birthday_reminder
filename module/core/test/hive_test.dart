@@ -27,10 +27,10 @@ void main() {
   test('Add a value into Hive cache', () {
     final userOperation = HiveCacheOperation<UserCacheModel>();
     // Eğer add metodu asenkron ise await eklemeyi unutma
-    userOperation.add(UserCacheModel(name: "Anıl", id: '1'));
+    userOperation.add(UserCacheModel(name: 'Anıl', id: '1'));
 
     final item1 = userOperation.get('1');
     expect(item1, isNotNull);
-    expect(item1?.name, "Anıl");
+    expect(item1?.name, 'Anıl');
   });
 }

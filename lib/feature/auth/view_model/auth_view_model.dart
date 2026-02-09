@@ -1,3 +1,5 @@
+import 'package:birthday_reminder/product/state/container/product_state_container.dart';
+import 'package:birthday_reminder/product/service/notification/notification_service.dart';
 import 'package:birthday_reminder/feature/auth/view_model/state/auth_state.dart';
 import 'package:birthday_reminder/product/repositories/auth_repository.dart';
 import 'package:birthday_reminder/product/state/base/base_cubit.dart';
@@ -20,13 +22,10 @@ final class AuthViewModel extends BaseCubit<AuthState> {
       // AuthRepository check logic was: currentUser != null || getCachedUser() != null
       // But we should probably prefer currentUser or verify token.
       // For now, mirroring old logic roughly.
-      emit(
-        state.copyWith(
-          status: AuthStatus.authenticated,
-          user:
-              cachedUser, // Might be null if only currentUser is set? Repo logic assumes cachedUser is source of truth for UserModel object.
-        ),
-      );
+      emit(state.copyWith(status: AuthStatus.authenticated, user: cachedUser));
+      if (cachedUser != null) {
+        _updateToken(cachedUser.id);
+      }
     } else {
       emit(state.copyWith(status: AuthStatus.unauthenticated));
     }
@@ -43,8 +42,10 @@ final class AuthViewModel extends BaseCubit<AuthState> {
     result.fold(
       (error) =>
           emit(state.copyWith(status: AuthStatus.error, errorMessage: error)),
-      (user) =>
-          emit(state.copyWith(status: AuthStatus.authenticated, user: user)),
+      (user) {
+        emit(state.copyWith(status: AuthStatus.authenticated, user: user));
+        _updateToken(user.id);
+      },
     );
   }
 
@@ -59,13 +60,27 @@ final class AuthViewModel extends BaseCubit<AuthState> {
     result.fold(
       (error) =>
           emit(state.copyWith(status: AuthStatus.error, errorMessage: error)),
-      (user) =>
-          emit(state.copyWith(status: AuthStatus.authenticated, user: user)),
+      (user) {
+        emit(state.copyWith(status: AuthStatus.authenticated, user: user));
+        _updateToken(user.id);
+      },
     );
   }
 
   Future<void> signOut() async {
     await _authRepository.signOut();
     emit(state.copyWith(status: AuthStatus.unauthenticated));
+  }
+
+  Future<void> _updateToken(String userId) async {
+    try {
+      final token = await ProductContainer.read<INotificationService>()
+          .getToken();
+      if (token != null) {
+        await _authRepository.updateFcmToken(userId, token);
+      }
+    } catch (e) {
+      // Log error
+    }
   }
 }
