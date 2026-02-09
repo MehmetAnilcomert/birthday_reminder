@@ -1,8 +1,8 @@
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
 import 'package:birthday_reminder/product/models/birthday_model.dart';
-import 'package:birthday_reminder/product/utility/theme/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:kartal/kartal.dart';
 
 class BirthdayCard extends StatelessWidget {
   const BirthdayCard({
@@ -34,8 +34,8 @@ class BirthdayCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.primary.withValues(alpha: 0.8),
-                      AppColors.secondary.withValues(alpha: 0.8),
+                      context.general.colorScheme.primary.withValues(alpha: 0.8),
+                      context.general.colorScheme.secondary.withValues(alpha: 0.8),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -46,10 +46,10 @@ class BirthdayCard extends StatelessWidget {
                   child: Text(
                     birthday.name[0].toUpperCase() +
                         birthday.surname[0].toUpperCase(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textOnPrimary,
+                      color: context.general.colorScheme.onPrimary,
                     ),
                   ),
                 ),
@@ -63,18 +63,16 @@ class BirthdayCard extends StatelessWidget {
                   children: [
                     Text(
                       birthday.fullName,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: context.general.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+                        color: context.general.colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       _getRelationshipText(birthday.relationship),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
+                      style: context.general.textTheme.bodyMedium?.copyWith(
+                        color: context.general.colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -83,9 +81,8 @@ class BirthdayCard extends StatelessWidget {
                         'dd MMMM',
                         context.locale.toString(),
                       ).format(birthday.birthdayDate),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
+                      style: context.general.textTheme.bodyMedium?.copyWith(
+                        color: context.general.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -106,10 +103,9 @@ class BirthdayCard extends StatelessWidget {
                     ),
                     child: Text(
                       _getDaysLeftText(daysLeft),
-                      style: const TextStyle(
-                        fontSize: 12,
+                      style: context.general.textTheme.labelSmall?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textOnPrimary,
+                        color: context.general.colorScheme.onPrimary,
                       ),
                     ),
                   ),
@@ -119,7 +115,7 @@ class BirthdayCard extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.edit, size: 20),
                         onPressed: onEdit,
-                        color: AppColors.secondary,
+                        color: context.general.colorScheme.secondary,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -127,7 +123,7 @@ class BirthdayCard extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.delete, size: 20),
                         onPressed: onDelete,
-                        color: AppColors.error,
+                        color: context.general.colorScheme.error,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -156,9 +152,10 @@ class BirthdayCard extends StatelessWidget {
   }
 
   Color _getDaysLeftColor(int days) {
-    if (days == 0) return AppColors.birthdayToday;
-    if (days <= 7) return AppColors.birthdayUpcoming;
-    return AppColors.secondary;
+    // Using tertiary for birthday today, primary for upcoming
+    if (days == 0) return const Color(0xFFFF1744); // Birthday today - red
+    if (days <= 7) return const Color(0xFFFF6E40); // Upcoming - orange
+    return const Color(0xFF9E9E9E); // Past - grey
   }
 
   String _getDaysLeftText(int days) {

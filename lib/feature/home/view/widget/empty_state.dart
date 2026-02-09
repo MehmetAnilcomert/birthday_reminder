@@ -1,7 +1,7 @@
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
-import 'package:birthday_reminder/product/utility/theme/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:kartal/kartal.dart';
 
 class EmptyBirthdayState extends StatelessWidget {
   const EmptyBirthdayState({super.key});
@@ -22,7 +22,7 @@ class EmptyBirthdayState extends StatelessWidget {
                   width: 200,
                   height: 200,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryLight.withValues(alpha: 0.2),
+                    color: context.general.colorScheme.primaryContainer.withValues(alpha: 0.3),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -30,13 +30,13 @@ class EmptyBirthdayState extends StatelessWidget {
                   width: 150,
                   height: 150,
                   decoration: BoxDecoration(
-                    color: AppColors.secondaryLight.withValues(alpha: 0.3),
+                    color: context.general.colorScheme.secondaryContainer.withValues(alpha: 0.4),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.cake_outlined,
                     size: 80,
-                    color: AppColors.primary,
+                    color: context.general.colorScheme.primary,
                   ),
                 ),
               ],
@@ -46,10 +46,9 @@ class EmptyBirthdayState extends StatelessWidget {
             // Title
             Text(
               LocaleKeys.no_birthdays.tr(),
-              style: const TextStyle(
-                fontSize: 20,
+              style: context.general.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: context.general.colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
@@ -58,9 +57,8 @@ class EmptyBirthdayState extends StatelessWidget {
             // Description
             Text(
               LocaleKeys.no_birthdays_description.tr(),
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.textSecondary,
+              style: context.general.textTheme.bodyMedium?.copyWith(
+                color: context.general.colorScheme.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -70,11 +68,11 @@ class EmptyBirthdayState extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildDecoIcon(Icons.celebration, AppColors.accent),
+                _buildDecoIcon(context, Icons.celebration, context.general.colorScheme.tertiary),
                 const SizedBox(width: 16),
-                _buildDecoIcon(Icons.card_giftcard, AppColors.secondary),
+                _buildDecoIcon(context, Icons.card_giftcard, context.general.colorScheme.secondary),
                 const SizedBox(width: 16),
-                _buildDecoIcon(Icons.emoji_emotions, AppColors.warning),
+                _buildDecoIcon(context, Icons.emoji_emotions, context.general.colorScheme.primaryContainer),
               ],
             ),
           ],
@@ -83,11 +81,11 @@ class EmptyBirthdayState extends StatelessWidget {
     );
   }
 
-  Widget _buildDecoIcon(IconData icon, Color color) {
+  Widget _buildDecoIcon(BuildContext context, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(icon, color: color, size: 24),

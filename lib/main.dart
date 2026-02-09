@@ -29,6 +29,7 @@ class BirthdayReminder extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: _appRouter.config(),
       title: LocaleKeys.app_name.tr(),
+      debugShowCheckedModeBanner: false,
       theme: CustomLightTheme().themeData,
       darkTheme: CustomDarkTheme().themeData,
       themeMode: context.watch<ProductViewModel>().state.themeMode,

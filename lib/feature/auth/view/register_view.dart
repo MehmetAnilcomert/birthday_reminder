@@ -4,11 +4,11 @@ import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
 import 'package:birthday_reminder/feature/auth/view_model/auth_view_model.dart';
 import 'package:birthday_reminder/feature/auth/view_model/state/auth_state.dart';
 import 'package:birthday_reminder/product/state/base/base_state.dart';
-import 'package:birthday_reminder/product/utility/theme/app_colors.dart';
 import 'package:birthday_reminder/product/utility/validators.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kartal/kartal.dart';
 
 @RoutePage()
 class RegisterView extends StatefulWidget {
@@ -52,7 +52,7 @@ class _RegisterViewState extends BaseState<RegisterView> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.errorMessage ?? LocaleKeys.error.tr()),
-                backgroundColor: AppColors.error,
+                backgroundColor: context.general.colorScheme.error,
               ),
             );
           } else if (state.status == AuthStatus.authenticated) {
@@ -71,18 +71,17 @@ class _RegisterViewState extends BaseState<RegisterView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.cake,
                         size: 100,
-                        color: AppColors.primary,
+                        color: context.general.colorScheme.primary,
                       ),
                       const SizedBox(height: 16),
                       Text(
                         LocaleKeys.register.tr(),
-                        style: const TextStyle(
-                          fontSize: 28,
+                        style: context.general.textTheme.headlineLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
+                          color: context.general.colorScheme.primary,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -151,13 +150,13 @@ class _RegisterViewState extends BaseState<RegisterView> {
                             ? null
                             : _handleRegister,
                         child: state.status == AuthStatus.loading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppColors.textOnPrimary,
+                                    context.general.colorScheme.onPrimary,
                                   ),
                                 ),
                               )

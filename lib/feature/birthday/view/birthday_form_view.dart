@@ -6,11 +6,11 @@ import 'package:birthday_reminder/feature/birthday/view_model/state/birthday_for
 import 'package:birthday_reminder/product/models/birthday_model.dart';
 import 'package:birthday_reminder/product/state/base/base_state.dart';
 import 'package:birthday_reminder/product/state/container/product_state_items.dart';
-import 'package:birthday_reminder/product/utility/theme/app_colors.dart';
 import 'package:birthday_reminder/product/utility/validators.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kartal/kartal.dart';
 
 @RoutePage()
 class BirthdayFormView extends StatefulWidget {
@@ -62,11 +62,11 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: AppColors.textOnPrimary,
-              surface: AppColors.surface,
-              onSurface: AppColors.textPrimary,
+            colorScheme: ColorScheme.light(
+              primary: context.general.colorScheme.primary,
+              onPrimary: context.general.colorScheme.onPrimary,
+              surface: context.general.colorScheme.surface,
+              onSurface: context.general.colorScheme.onSurface,
             ),
           ),
           child: child!,
@@ -85,9 +85,9 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView> {
     if (_formKey.currentState!.validate()) {
       if (_selectedDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Lütfen doğum tarihini seçin'),
-            backgroundColor: AppColors.warning,
+          SnackBar(
+            content: const Text('Lütfen doğum tarihini seçin'),
+            backgroundColor: context.general.colorScheme.tertiary,
           ),
         );
         return;
@@ -131,7 +131,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView> {
                       ? LocaleKeys.birthday_updated.tr()
                       : LocaleKeys.birthday_added.tr(),
                 ),
-                backgroundColor: AppColors.success,
+                backgroundColor: context.general.colorScheme.tertiary,
               ),
             );
             context.maybePop(true);
@@ -139,7 +139,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.errorMessage ?? LocaleKeys.error.tr()),
-                backgroundColor: AppColors.error,
+                backgroundColor: context.general.colorScheme.error,
               ),
             );
           }
@@ -204,8 +204,8 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView> {
                                   : 'Tarih Seçin',
                               style: TextStyle(
                                 color: _selectedDate != null
-                                    ? AppColors.textPrimary
-                                    : AppColors.textHint,
+                                    ? context.general.colorScheme.onSurface
+                                    : context.general.colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ),
@@ -272,7 +272,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView> {
                                     )
                                   : Text(
                                       LocaleKeys.save.tr(),
-                                      style: const TextStyle(fontSize: 16),
+                                      style: context.general.textTheme.bodyLarge,
                                     ),
                             );
                           },
