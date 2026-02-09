@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:birthday_reminder/product/init/config/prod_environment.dart';
+import 'package:birthday_reminder/product/service/firebase_options.dart';
 import 'package:birthday_reminder/product/state/container/product_state_container.dart';
 import 'package:birthday_reminder/product/state/container/product_state_items.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_logger/easy_logger.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kartal/kartal.dart';
@@ -33,6 +35,11 @@ final class ProductInitialize {
 
     /// Set environment configurations
     ProductEnvironment.general();
+
+    /// Initialize Firebase
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
     /// Initialize Getit
     ProductContainer.setUp();

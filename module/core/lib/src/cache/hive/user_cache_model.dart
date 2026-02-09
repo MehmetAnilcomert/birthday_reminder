@@ -15,7 +15,7 @@ class UserCacheModel with CacheModel {
   final String name;
 
   @override
-  CacheModel fromDynamicJson(json) {
+  CacheModel fromDynamicJson(dynamic json) {
     final itemMap = json as Map<String, dynamic>;
     return UserCacheModel(
       name: itemMap['name'] as String,

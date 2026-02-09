@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:birthday_reminder/product/navigation/app_router.gr.dart';
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
 import 'package:birthday_reminder/feature/auth/view_model/auth_view_model.dart';
 import 'package:birthday_reminder/feature/auth/view_model/state/auth_state.dart';
@@ -55,11 +56,8 @@ class _RegisterViewState extends BaseState<RegisterView> {
               ),
             );
           } else if (state.status == AuthStatus.authenticated) {
-            // Navigate to Home or show success
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Registration Successful')),
-            );
-            // context.router.replace(const HomeRoute());
+            // Navigate to Home
+            context.router.replace(const HomeRoute());
           }
         },
         builder: (context, state) {

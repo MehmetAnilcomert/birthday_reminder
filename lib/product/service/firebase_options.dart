@@ -1,39 +1,6 @@
 import 'package:birthday_reminder/product/init/config/prod_environment.dart';
+import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart';
-
-class FirebaseOptions {
-  const FirebaseOptions({
-    required this.apiKey,
-    required this.appId,
-    required this.messagingSenderId,
-    required this.projectId,
-    this.authDomain,
-    this.databaseURL,
-    this.storageBucket,
-    this.measurementId,
-    this.trackingId,
-    this.deepLinkURLScheme,
-    this.androidClientId,
-    this.iosClientId,
-    this.iosBundleId,
-    this.appGroupId,
-  });
-
-  final String apiKey;
-  final String appId;
-  final String messagingSenderId;
-  final String projectId;
-  final String? authDomain;
-  final String? databaseURL;
-  final String? storageBucket;
-  final String? measurementId;
-  final String? trackingId;
-  final String? deepLinkURLScheme;
-  final String? androidClientId;
-  final String? iosClientId;
-  final String? iosBundleId;
-  final String? appGroupId;
-}
 
 // You can get these values from Firebase Console
 class DefaultFirebaseOptions {

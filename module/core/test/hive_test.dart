@@ -3,7 +3,6 @@ import 'package:core/src/cache/hive/hive_cache_manager.dart';
 import 'package:core/src/cache/hive/hive_cache_operation.dart';
 import 'package:core/src/cache/hive/user_cache_model.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hive/hive.dart';
 import 'core/hive_common_test.dart';
 
 void main() {

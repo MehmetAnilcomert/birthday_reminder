@@ -54,11 +54,7 @@ class _LoginViewState extends BaseState<LoginView> {
             );
           } else if (state.status == AuthStatus.authenticated) {
             // Navigate to Home
-            // context.router.replace(const HomeRoute());
-            // For now, since HomeRoute is not ready, just print or show success
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('Login Successful')));
+            context.router.replace(const HomeRoute());
           }
         },
         builder: (context, state) {
