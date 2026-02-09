@@ -17,3 +17,4 @@ final class AppConstants {
   static const Duration mediumDuration = Duration(milliseconds: 300);
   static const Duration longDuration = Duration(milliseconds: 500);
 }
+

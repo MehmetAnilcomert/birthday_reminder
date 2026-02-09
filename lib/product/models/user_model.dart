@@ -39,3 +39,4 @@ class UserModel extends Equatable {
   @override
   List<Object?> get props => [id, email, displayName, createdAt];
 }
+

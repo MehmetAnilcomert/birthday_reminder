@@ -1,78 +1,40 @@
+import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
+import 'package:birthday_reminder/product/init/product_initialize.dart';
+import 'package:birthday_reminder/product/init/product_localization.dart';
+import 'package:birthday_reminder/product/init/state_initialize.dart';
+import 'package:birthday_reminder/product/init/theme/dark_theme/custom_dark_theme.dart';
+import 'package:birthday_reminder/product/init/theme/light_theme/custom_light_theme.dart';
+import 'package:birthday_reminder/product/navigation/app_router.dart';
+import 'package:birthday_reminder/product/state/view_model/product_view_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'product/init/app_init.dart';
-import 'product/utility/theme/app_theme.dart';
-import 'product/repositories/auth_repository.dart';
-import 'product/repositories/birthday_repository.dart';
-import 'features/auth/bloc/auth_bloc.dart';
-import 'features/auth/bloc/auth_event.dart';
-import 'features/auth/bloc/auth_state.dart';
-import 'features/auth/view/auth_view.dart';
-import 'features/home/bloc/birthday_bloc.dart';
-import 'features/navigation/main_navigation_view.dart';
 
 Future<void> main() async {
-  await AppInit.init();
-
+  await ProductInitialize().startApplication();
   runApp(
-    EasyLocalization(
-      supportedLocales: const [Locale('tr', 'TR'), Locale('en', 'US')],
-      path: 'assets/translations',
-      fallbackLocale: const Locale('tr', 'TR'),
-      child: const MainApp(),
-    ),
+    ProductLocalization(child: StateInitialize(child: BirthdayReminder())),
   );
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+/// The main application widget that sets up architecture project.
+class BirthdayReminder extends StatelessWidget {
+  /// Creates an instance of [BirthdayReminder].
+  BirthdayReminder({super.key});
+
+  final _appRouter = AppRouter();
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider(create: (_) => AuthRepository()),
-        RepositoryProvider(create: (_) => BirthdayRepository()),
-      ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) =>
-                AuthBloc(authRepository: context.read<AuthRepository>())
-                  ..add(const AuthCheckRequested()),
-          ),
-          BlocProvider(
-            create: (context) => BirthdayBloc(
-              birthdayRepository: context.read<BirthdayRepository>(),
-            ),
-          ),
-        ],
-        child: MaterialApp(
-          title: 'Birthday Reminder',
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          home: BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              if (state.status == AuthStatus.loading ||
-                  state.status == AuthStatus.initial) {
-                return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
-                );
-              }
-
-              if (state.status == AuthStatus.authenticated) {
-                return const MainNavigationView();
-              }
-
-              return const LoginView();
-            },
-          ),
-        ),
-      ),
+    return MaterialApp.router(
+      routerConfig: _appRouter.config(),
+      title: LocaleKeys.app_name.tr(),
+      theme: CustomLightTheme().themeData,
+      darkTheme: CustomDarkTheme().themeData,
+      themeMode: context.watch<ProductViewModel>().state.themeMode,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
     );
   }
 }

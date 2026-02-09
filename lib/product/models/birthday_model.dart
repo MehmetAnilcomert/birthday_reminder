@@ -97,3 +97,4 @@ class BirthdayModel extends Equatable {
     updatedAt,
   ];
 }
+

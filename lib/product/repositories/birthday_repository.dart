@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import '../models/birthday_model.dart';
-import '../cache/cache_manager.dart';
+import 'package:birthday_reminder/product/models/birthday_model.dart';
+import 'package:birthday_reminder/product/state/container/product_state_items.dart';
+import 'package:birthday_reminder/product/cache/product_preferences.dart';
 import 'dart:convert';
 
 class BirthdayRepository {
@@ -110,11 +111,16 @@ class BirthdayRepository {
   // Cache methods
   Future<void> _cacheBirthdays(List<BirthdayModel> birthdays) async {
     final birthdaysJson = birthdays.map((b) => b.toJson()).toList();
-    await CacheManager.write(CacheKeys.birthdays, jsonEncode(birthdaysJson));
+    await ProductStateItems.productPreferences.setString(
+      ProductPreferencesKeys.birthdays,
+      jsonEncode(birthdaysJson),
+    );
   }
 
   List<BirthdayModel>? _getCachedBirthdays() {
-    final cached = CacheManager.read<String>(CacheKeys.birthdays);
+    final cached = ProductStateItems.productPreferences.getString(
+      ProductPreferencesKeys.birthdays,
+    );
     if (cached != null) {
       final List<dynamic> birthdaysJson = jsonDecode(cached);
       return birthdaysJson.map((json) => BirthdayModel.fromJson(json)).toList();

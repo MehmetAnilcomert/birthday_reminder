@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import '../models/user_model.dart';
-import '../cache/cache_manager.dart';
+import 'package:birthday_reminder/product/models/user_model.dart';
+import 'package:birthday_reminder/product/state/container/product_state_items.dart';
+import 'package:birthday_reminder/product/cache/product_preferences.dart';
+import 'dart:convert';
 
 class AuthRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -33,7 +35,10 @@ class AuthRepository {
 
       await _firestore.collection('users').doc(user.id).set(user.toJson());
 
-      await CacheManager.write(CacheKeys.user, user.toJson());
+      await ProductStateItems.productPreferences.setString(
+        ProductPreferencesKeys.user,
+        jsonEncode(user.toJson()),
+      );
 
       return Right(user);
     } on FirebaseAuthException catch (e) {
@@ -67,7 +72,10 @@ class AuthRepository {
       }
 
       final user = UserModel.fromJson(doc.data()!);
-      await CacheManager.write(CacheKeys.user, user.toJson());
+      await ProductStateItems.productPreferences.setString(
+        ProductPreferencesKeys.user,
+        jsonEncode(user.toJson()),
+      );
 
       return Right(user);
     } on FirebaseAuthException catch (e) {
@@ -79,13 +87,15 @@ class AuthRepository {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
-    await CacheManager.clear();
+    await ProductStateItems.productPreferences.clear();
   }
 
   UserModel? getCachedUser() {
-    final userJson = CacheManager.read<Map<String, dynamic>>(CacheKeys.user);
+    final userJson = ProductStateItems.productPreferences.getString(
+      ProductPreferencesKeys.user,
+    );
     if (userJson != null) {
-      return UserModel.fromJson(userJson);
+      return UserModel.fromJson(jsonDecode(userJson));
     }
     return null;
   }

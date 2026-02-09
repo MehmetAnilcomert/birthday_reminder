@@ -1,3 +1,4 @@
+import 'package:birthday_reminder/product/init/config/prod_environment.dart';
 import 'package:flutter/foundation.dart';
 
 class FirebaseOptions {
@@ -34,7 +35,6 @@ class FirebaseOptions {
   final String? appGroupId;
 }
 
-// TODO: Replace with your Firebase project configuration
 // You can get these values from Firebase Console
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
@@ -62,48 +62,47 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAicqWGn3SPEcNoI83npkvjSZTbQBLgU-U',
-    appId: '1:17337740461:web:2de2b97ca25994b8452a24',
-    messagingSenderId: '17337740461',
-    projectId: 'birthday-note-app',
-    authDomain: 'birthday-note-app.firebaseapp.com',
-    storageBucket: 'birthday-note-app.firebasestorage.app',
+  static FirebaseOptions get web => FirebaseOptions(
+    apiKey: EnvironmentItems.firebaseWebApiKey.value,
+    appId: EnvironmentItems.firebaseWebAppId.value,
+    messagingSenderId: EnvironmentItems.firebaseMessagingSenderId.value,
+    projectId: EnvironmentItems.firebaseProjectId.value,
+    authDomain: EnvironmentItems.firebaseAuthDomain.value,
+    storageBucket: EnvironmentItems.firebaseStorageBucket.value,
   );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCEcTwlCZA6u9wy4eM-EOZiZJapv4KV5_Q',
-    appId: '1:17337740461:android:0c94564af7f4b651452a24',
-    messagingSenderId: '17337740461',
-    projectId: 'birthday-note-app',
-    storageBucket: 'birthday-note-app.firebasestorage.app',
+  static FirebaseOptions get android => FirebaseOptions(
+    apiKey: EnvironmentItems.firebaseAndroidApiKey.value,
+    appId: EnvironmentItems.firebaseAndroidAppId.value,
+    messagingSenderId: EnvironmentItems.firebaseMessagingSenderId.value,
+    projectId: EnvironmentItems.firebaseProjectId.value,
+    storageBucket: EnvironmentItems.firebaseStorageBucket.value,
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDY4UnJI676SOf_c9zmulQOPFxNK6Dpb2E',
-    appId: '1:17337740461:ios:e884ef59be486a13452a24',
-    messagingSenderId: '17337740461',
-    projectId: 'birthday-note-app',
-    storageBucket: 'birthday-note-app.firebasestorage.app',
-    iosBundleId: 'com.example.birthdayReminder',
+  static FirebaseOptions get ios => FirebaseOptions(
+    apiKey: EnvironmentItems.firebaseIosApiKey.value,
+    appId: EnvironmentItems.firebaseIosAppId.value,
+    messagingSenderId: EnvironmentItems.firebaseMessagingSenderId.value,
+    projectId: EnvironmentItems.firebaseProjectId.value,
+    storageBucket: EnvironmentItems.firebaseStorageBucket.value,
+    iosBundleId: EnvironmentItems.firebaseIosBundleId.value,
   );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDY4UnJI676SOf_c9zmulQOPFxNK6Dpb2E',
-    appId: '1:17337740461:ios:e884ef59be486a13452a24',
-    messagingSenderId: '17337740461',
-    projectId: 'birthday-note-app',
-    storageBucket: 'birthday-note-app.firebasestorage.app',
-    iosBundleId: 'com.example.birthdayReminder',
+  static FirebaseOptions get macos => FirebaseOptions(
+    apiKey: EnvironmentItems.firebaseMacOsApiKey.value,
+    appId: EnvironmentItems.firebaseMacOsAppId.value,
+    messagingSenderId: EnvironmentItems.firebaseMessagingSenderId.value,
+    projectId: EnvironmentItems.firebaseProjectId.value,
+    storageBucket: EnvironmentItems.firebaseStorageBucket.value,
+    iosBundleId: EnvironmentItems.firebaseIosBundleId.value,
   );
 
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyAicqWGn3SPEcNoI83npkvjSZTbQBLgU-U',
-    appId: '1:17337740461:web:85ddc6e161baa245452a24',
-    messagingSenderId: '17337740461',
-    projectId: 'birthday-note-app',
-    authDomain: 'birthday-note-app.firebaseapp.com',
-    storageBucket: 'birthday-note-app.firebasestorage.app',
+  static FirebaseOptions get windows => FirebaseOptions(
+    apiKey: EnvironmentItems.firebaseWindowsApiKey.value,
+    appId: EnvironmentItems.firebaseWindowsAppId.value,
+    messagingSenderId: EnvironmentItems.firebaseMessagingSenderId.value,
+    projectId: EnvironmentItems.firebaseProjectId.value,
+    authDomain: EnvironmentItems.firebaseAuthDomain.value,
+    storageBucket: EnvironmentItems.firebaseStorageBucket.value,
   );
-
 }

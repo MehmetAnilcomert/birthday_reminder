@@ -13,10 +13,8 @@ BirthdayModel _$BirthdayModelFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       surname: json['surname'] as String,
       birthdayDate: DateTime.parse(json['birthdayDate'] as String),
-      relationship: $enumDecode(
-        _$RelationshipTypeEnumMap,
-        json['relationship'],
-      ),
+      relationship:
+          $enumDecode(_$RelationshipTypeEnumMap, json['relationship']),
       greetingMessage: json['greetingMessage'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: json['updatedAt'] == null
@@ -43,27 +41,3 @@ const _$RelationshipTypeEnumMap = {
   RelationshipType.colleague: 'colleague',
   RelationshipType.other: 'other',
 };
-
-K $enumDecode<K, V>(Map<K, V> enumValues, Object? source, {K? unknownValue}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries
-      .singleWhere(
-        (e) => e.value == source,
-        orElse: () {
-          if (unknownValue == null) {
-            throw ArgumentError(
-              '`$source` is not one of the supported values: '
-              '${enumValues.values.join(', ')}',
-            );
-          }
-          return MapEntry(unknownValue, enumValues.values.first);
-        },
-      )
-      .key;
-}

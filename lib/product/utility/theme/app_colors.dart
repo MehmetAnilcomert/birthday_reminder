@@ -44,3 +44,4 @@ final class AppColors {
   static const Color birthdayUpcoming = Color(0xFFFF6E40);
   static const Color birthdayPast = Color(0xFF9E9E9E);
 }
+
