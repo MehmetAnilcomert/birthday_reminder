@@ -10,12 +10,13 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       id: json['id'] as String,
       email: json['email'] as String,
       displayName: json['displayName'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      createdAt: const ProductTimestampConverter()
+          .fromJson(json['createdAt'] as Object),
     );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'id': instance.id,
       'email': instance.email,
       'displayName': instance.displayName,
-      'createdAt': instance.createdAt.toIso8601String(),
+      'createdAt': const ProductTimestampConverter().toJson(instance.createdAt),
     };

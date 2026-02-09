@@ -1,3 +1,4 @@
+import 'package:birthday_reminder/product/utility/json_converters/product_timestamp_converter.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -8,6 +9,7 @@ class UserModel extends Equatable {
   final String id;
   final String email;
   final String? displayName;
+  @ProductTimestampConverter()
   final DateTime createdAt;
 
   const UserModel({
@@ -39,4 +41,3 @@ class UserModel extends Equatable {
   @override
   List<Object?> get props => [id, email, displayName, createdAt];
 }
-

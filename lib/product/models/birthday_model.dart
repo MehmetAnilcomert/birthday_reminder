@@ -1,3 +1,4 @@
+import 'package:birthday_reminder/product/utility/json_converters/product_timestamp_converter.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -11,10 +12,13 @@ class BirthdayModel extends Equatable {
   final String userId;
   final String name;
   final String surname;
+  @ProductTimestampConverter()
   final DateTime birthdayDate;
   final RelationshipType relationship;
   final String greetingMessage;
+  @ProductTimestampConverter()
   final DateTime createdAt;
+  @ProductTimestampConverter()
   final DateTime? updatedAt;
 
   const BirthdayModel({
@@ -97,4 +101,3 @@ class BirthdayModel extends Equatable {
     updatedAt,
   ];
 }
-

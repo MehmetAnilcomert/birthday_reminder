@@ -12,14 +12,15 @@ BirthdayModel _$BirthdayModelFromJson(Map<String, dynamic> json) =>
       userId: json['userId'] as String,
       name: json['name'] as String,
       surname: json['surname'] as String,
-      birthdayDate: DateTime.parse(json['birthdayDate'] as String),
+      birthdayDate: const ProductTimestampConverter()
+          .fromJson(json['birthdayDate'] as Object),
       relationship:
           $enumDecode(_$RelationshipTypeEnumMap, json['relationship']),
       greetingMessage: json['greetingMessage'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: json['updatedAt'] == null
-          ? null
-          : DateTime.parse(json['updatedAt'] as String),
+      createdAt: const ProductTimestampConverter()
+          .fromJson(json['createdAt'] as Object),
+      updatedAt: _$JsonConverterFromJson<Object, DateTime>(
+          json['updatedAt'], const ProductTimestampConverter().fromJson),
     );
 
 Map<String, dynamic> _$BirthdayModelToJson(BirthdayModel instance) =>
@@ -28,11 +29,13 @@ Map<String, dynamic> _$BirthdayModelToJson(BirthdayModel instance) =>
       'userId': instance.userId,
       'name': instance.name,
       'surname': instance.surname,
-      'birthdayDate': instance.birthdayDate.toIso8601String(),
+      'birthdayDate':
+          const ProductTimestampConverter().toJson(instance.birthdayDate),
       'relationship': _$RelationshipTypeEnumMap[instance.relationship]!,
       'greetingMessage': instance.greetingMessage,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
+      'createdAt': const ProductTimestampConverter().toJson(instance.createdAt),
+      'updatedAt': _$JsonConverterToJson<Object, DateTime>(
+          instance.updatedAt, const ProductTimestampConverter().toJson),
     };
 
 const _$RelationshipTypeEnumMap = {
@@ -41,3 +44,15 @@ const _$RelationshipTypeEnumMap = {
   RelationshipType.colleague: 'colleague',
   RelationshipType.other: 'other',
 };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) =>
+    value == null ? null : toJson(value);
