@@ -62,6 +62,7 @@ dependencies:
   # modules
   common: 
     path: module/common
+  url_launcher: ^6.3.2
 
   
   # 

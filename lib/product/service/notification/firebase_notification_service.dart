@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:birthday_reminder/product/service/notification/notification_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Concrete implementation of [INotificationService] using Firebase Messaging.
 final class FirebaseNotificationService implements INotificationService {
@@ -33,9 +35,7 @@ final class FirebaseNotificationService implements INotificationService {
 
     await _localNotifications.initialize(
       initSettings,
-      onDidReceiveNotificationResponse: (details) {
-        // Handle notification tap
-      },
+      onDidReceiveNotificationResponse: _handleNotificationResponse,
     );
 
     // Create Android channel
@@ -94,16 +94,45 @@ final class FirebaseNotificationService implements INotificationService {
             icon: android.smallIcon,
             priority: Priority.max,
             importance: Importance.max,
+            actions: [
+              const AndroidNotificationAction(
+                'send_message',
+                'Mesaj Gönder',
+                showsUserInterface: true,
+              ),
+            ],
           ),
         ),
-        payload: message.data.toString(),
+        payload: jsonEncode(message.data),
       );
+    }
+  }
+
+  Future<void> _handleNotificationResponse(
+    NotificationResponse details,
+  ) async {
+    if (details.actionId == 'send_message' && details.payload != null) {
+      try {
+        final data = jsonDecode(details.payload!) as Map<String, dynamic>;
+        final message =
+            data['greetingMessage'] as String? ?? data['message'] as String?;
+        if (message != null && message.isNotEmpty) {
+          final uri = Uri.parse(
+            'https://wa.me/?text=${Uri.encodeComponent(message)}',
+          );
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        }
+      } catch (e) {
+        // Handle error
+      }
     }
   }
 
   @override
   Future<void> requestPermission() async {
-    final settings = await _messaging.requestPermission(
+    await _messaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,

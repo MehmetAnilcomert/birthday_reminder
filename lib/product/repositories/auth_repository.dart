@@ -58,6 +58,7 @@ class AuthRepository {
   Future<Either<String, UserModel>> signIn({
     required String email,
     required String password,
+    String? currentFcmToken,
   }) async {
     try {
       final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
@@ -78,7 +79,20 @@ class AuthRepository {
         return const Left('Kullanıcı bulunamadı');
       }
 
-      final user = UserModel.fromJson(doc.data()!);
+      final userData = doc.data()!;
+      final existingToken = userData['fcmToken'] as String?;
+
+      // Check if another device is logged in
+      if (existingToken != null &&
+          currentFcmToken != null &&
+          existingToken != currentFcmToken) {
+        await _firebaseAuth.signOut();
+        return const Left(
+          'Bu hesaba başka bir cihazdan giriş yapılmış. Lütfen diğer cihazdan çıkış yapın.',
+        );
+      }
+
+      final user = UserModel.fromJson(userData);
       await ProductStateItems.productPreferences.setString(
         ProductPreferencesKeys.user,
         jsonEncode(user.toJson()),
@@ -92,7 +106,17 @@ class AuthRepository {
     }
   }
 
-  Future<void> signOut() async {
+  Future<void> signOut(String userId) async {
+    // Remove FCM token before signing out
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'fcmToken': null,
+        'fcmTokenUpdatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      // Error removing FCM token
+    }
+
     await _firebaseAuth.signOut();
     await ProductStateItems.productPreferences.clear();
   }

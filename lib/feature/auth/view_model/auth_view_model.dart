@@ -36,9 +36,15 @@ final class AuthViewModel extends BaseCubit<AuthState> {
   Future<void> signIn({required String email, required String password}) async {
     emit(state.copyWith(status: AuthStatus.loading));
 
+    String? token;
+    try {
+      token = await ProductContainer.read<INotificationService>().getToken();
+    } catch (_) {}
+
     final result = await _authRepository.signIn(
       email: email,
       password: password,
+      currentFcmToken: token,
     );
 
     result.fold(
@@ -75,7 +81,9 @@ final class AuthViewModel extends BaseCubit<AuthState> {
   }
 
   Future<void> signOut() async {
-    await _authRepository.signOut();
+    if (state.user != null) {
+      await _authRepository.signOut(state.user!.id);
+    }
     emit(state.copyWith(status: AuthStatus.unauthenticated));
   }
 

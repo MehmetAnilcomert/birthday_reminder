@@ -97,143 +97,155 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
       },
       builder: (context, state) {
         return AuthBackground(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Icon(
-                  Icons.cake,
-                  size: 80,
-                  color: context.general.colorScheme.primary,
-                ),
-                const SizedBox(height: ProductPadding.medium),
-                Text(
-                  LocaleKeys.register.tr(),
-                  style: context.general.textTheme.headlineLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: context.general.colorScheme.primary,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: ProductPadding.large),
-                AuthTextField(
-                  controller: _emailController,
-                  labelText: LocaleKeys.email.tr(),
-                  prefixIcon: Icons.email,
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) =>
-                      translateError(Validators.emailValidator(value)),
-                ),
-                const SizedBox(height: ProductPadding.medium),
-                AuthTextField(
-                  controller: _birthdayController,
-                  labelText: LocaleKeys.birthday.tr(),
-                  prefixIcon: Icons.cake,
-                  readOnly: true,
-                  onTap: () => _selectBirthday(context),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_today),
-                    onPressed: () => _selectBirthday(context),
-                  ),
-                  validator: (value) =>
-                      translateError(Validators.birthdayValidator(value)),
-                ),
-                const SizedBox(height: ProductPadding.medium),
-                AuthTextField(
-                  controller: _passwordController,
-                  labelText: LocaleKeys.password.tr(),
-                  prefixIcon: Icons.lock,
-                  obscureText: _obscurePassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                  validator: (value) =>
-                      translateError(Validators.passwordValidator(value)),
-                ),
-                const SizedBox(height: ProductPadding.medium),
-                AuthTextField(
-                  controller: _confirmPasswordController,
-                  labelText: LocaleKeys.confirm_password.tr(),
-                  prefixIcon: Icons.lock,
-                  obscureText: _obscureConfirmPassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureConfirmPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureConfirmPassword = !_obscureConfirmPassword;
-                      });
-                    },
-                  ),
-                  validator: (value) => translateError(
-                    Validators.confirmPasswordValidator(
-                      value,
-                      _passwordController.text,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: ProductPadding.normal),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.general.colorScheme.primary,
-                    foregroundColor: context.general.colorScheme.onPrimary,
-                    padding: const ProductPadding.symmetricVerticalMedium(),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 5,
-                  ),
-                  onPressed: state.status == AuthStatus.loading
-                      ? null
-                      : _handleRegister,
-                  child: state.status == AuthStatus.loading
-                      ? SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              context.general.colorScheme.onPrimary,
+          child: Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const ProductPadding.allMedium(),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Icon(
+                        Icons.cake,
+                        size: 80,
+                        color: context.general.colorScheme.primary,
+                      ),
+                      const SizedBox(height: ProductPadding.medium),
+                      Text(
+                        LocaleKeys.register.tr(),
+                        style: context.general.textTheme.headlineLarge
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: context.general.colorScheme.primary,
                             ),
-                          ),
-                        )
-                      : Text(
-                          LocaleKeys.register.tr(),
-                          style: context.general.textTheme.titleMedium
-                              ?.copyWith(
-                                color: context.general.colorScheme.onPrimary,
-                                fontWeight: FontWeight.bold,
-                              ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: ProductPadding.large),
+                      AuthTextField(
+                        controller: _emailController,
+                        labelText: LocaleKeys.email.tr(),
+                        prefixIcon: Icons.email,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) =>
+                            translateError(Validators.emailValidator(value)),
+                      ),
+                      const SizedBox(height: ProductPadding.medium),
+                      AuthTextField(
+                        controller: _birthdayController,
+                        labelText: LocaleKeys.birthday.tr(),
+                        prefixIcon: Icons.cake,
+                        readOnly: true,
+                        onTap: () => _selectBirthday(context),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.calendar_today),
+                          onPressed: () => _selectBirthday(context),
                         ),
-                ),
-                const SizedBox(height: ProductPadding.medium),
-                TextButton(
-                  onPressed: () {
-                    context.router.back();
-                  },
-                  child: Text(
-                    LocaleKeys.login.tr(),
-                    style: TextStyle(
-                      color: context.general.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        validator: (value) =>
+                            translateError(Validators.birthdayValidator(value)),
+                      ),
+                      const SizedBox(height: ProductPadding.medium),
+                      AuthTextField(
+                        controller: _passwordController,
+                        labelText: LocaleKeys.password.tr(),
+                        prefixIcon: Icons.lock,
+                        obscureText: _obscurePassword,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                        ),
+                        validator: (value) =>
+                            translateError(Validators.passwordValidator(value)),
+                      ),
+                      const SizedBox(height: ProductPadding.medium),
+                      AuthTextField(
+                        controller: _confirmPasswordController,
+                        labelText: LocaleKeys.confirm_password.tr(),
+                        prefixIcon: Icons.lock,
+                        obscureText: _obscureConfirmPassword,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureConfirmPassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscureConfirmPassword =
+                                  !_obscureConfirmPassword;
+                            });
+                          },
+                        ),
+                        validator: (value) => translateError(
+                          Validators.confirmPasswordValidator(
+                            value,
+                            _passwordController.text,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: ProductPadding.normal),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: context.general.colorScheme.primary,
+                          foregroundColor:
+                              context.general.colorScheme.onPrimary,
+                          padding:
+                              const ProductPadding.symmetricVerticalMedium(),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 5,
+                        ),
+                        onPressed: state.status == AuthStatus.loading
+                            ? null
+                            : _handleRegister,
+                        child: state.status == AuthStatus.loading
+                            ? SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    context.general.colorScheme.onPrimary,
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                LocaleKeys.register.tr(),
+                                style: context.general.textTheme.titleMedium
+                                    ?.copyWith(
+                                      color:
+                                          context.general.colorScheme.onPrimary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                      ),
+                      const SizedBox(height: ProductPadding.medium),
+                      TextButton(
+                        onPressed: () {
+                          context.router.back();
+                        },
+                        child: Text(
+                          LocaleKeys.login.tr(),
+                          style: TextStyle(
+                            color: context.general.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         );

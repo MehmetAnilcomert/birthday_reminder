@@ -146,7 +146,7 @@ class _HomeViewState extends BaseState<HomeView> {
                 ),
                 Text(
                   LocaleKeys.app_name.tr(),
-                  style: context.general.textTheme.headlineMedium?.copyWith(
+                  style: context.general.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: context.general.colorScheme.onPrimary,
                   ),
@@ -216,7 +216,7 @@ class _HomeViewState extends BaseState<HomeView> {
 
   Widget _buildBody(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 40), // Space for SearchBar
+      padding: const EdgeInsets.only(top: 20), // Space for SearchBar
       child: BlocBuilder<HomeViewModel, HomeState>(
         builder: (context, state) {
           if (state.status == HomeStatus.loading) {
