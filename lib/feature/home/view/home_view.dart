@@ -138,13 +138,24 @@ class _HomeViewState extends BaseState<HomeView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  LocaleKeys.welcome.tr(), // Or "Hello,"
-                  style: context.general.textTheme.titleMedium?.copyWith(
-                    color: context.general.colorScheme.onPrimary.withValues(
-                      alpha: 0.8,
-                    ),
-                  ),
+                BlocBuilder<AuthViewModel, AuthState>(
+                  bloc: ProductStateItems.authViewModel,
+                  builder: (context, state) {
+                    final userName = state.user?.name ?? '';
+                    final userSurname = state.user?.surname ?? '';
+                    final fullName = '$userName $userSurname'.trim();
+
+                    return Text(
+                      fullName.isNotEmpty
+                          ? 'Hoş geldin, $fullName'
+                          : LocaleKeys.welcome.tr(),
+                      style: context.general.textTheme.titleMedium?.copyWith(
+                        color: context.general.colorScheme.onPrimary.withValues(
+                          alpha: 0.8,
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 Text(
                   LocaleKeys.app_name.tr(),

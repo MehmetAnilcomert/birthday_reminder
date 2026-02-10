@@ -27,6 +27,8 @@ class RegisterView extends StatefulWidget {
 
 class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _surnameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -37,6 +39,8 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
 
   @override
   void dispose() {
+    _nameController.dispose();
+    _surnameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -74,6 +78,8 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
       await context.read<AuthViewModel>().signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text,
+        name: _nameController.text.trim(),
+        surname: _surnameController.text.trim(),
         birthday: _selectedBirthday,
       );
     }
@@ -123,6 +129,22 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: ProductPadding.large),
+                      AuthTextField(
+                        controller: _nameController,
+                        labelText: LocaleKeys.name.tr(),
+                        prefixIcon: Icons.person,
+                        validator: (value) =>
+                            translateError(Validators.requiredValidator(value)),
+                      ),
+                      const SizedBox(height: ProductPadding.medium),
+                      AuthTextField(
+                        controller: _surnameController,
+                        labelText: LocaleKeys.surname.tr(),
+                        prefixIcon: Icons.person_outline,
+                        validator: (value) =>
+                            translateError(Validators.requiredValidator(value)),
+                      ),
+                      const SizedBox(height: ProductPadding.medium),
                       AuthTextField(
                         controller: _emailController,
                         labelText: LocaleKeys.email.tr(),

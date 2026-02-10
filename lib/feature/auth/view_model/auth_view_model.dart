@@ -60,6 +60,8 @@ final class AuthViewModel extends BaseCubit<AuthState> {
   Future<void> signUp({
     required String email,
     required String password,
+    String? name,
+    String? surname,
     DateTime? birthday,
   }) async {
     emit(state.copyWith(status: AuthStatus.loading));
@@ -67,6 +69,8 @@ final class AuthViewModel extends BaseCubit<AuthState> {
     final result = await _authRepository.signUp(
       email: email,
       password: password,
+      name: name,
+      surname: surname,
       birthday: birthday,
     );
 
