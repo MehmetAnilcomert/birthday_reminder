@@ -23,6 +23,8 @@ class AuthRepository {
   Future<Either<String, UserModel>> signUp({
     required String email,
     required String password,
+    String? name,
+    String? surname,
     DateTime? birthday,
   }) async {
     try {
@@ -38,6 +40,8 @@ class AuthRepository {
       final user = UserModel(
         id: userCredential.user!.uid,
         email: email,
+        name: name,
+        surname: surname,
         birthday: birthday,
         createdAt: DateTime.now(),
       );

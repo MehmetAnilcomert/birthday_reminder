@@ -8,6 +8,8 @@ part 'user_model.g.dart';
 class UserModel extends Equatable {
   final String id;
   final String email;
+  final String? name;
+  final String? surname;
   final String? displayName;
   final String? fcmToken;
   @ProductTimestampConverter()
@@ -18,6 +20,8 @@ class UserModel extends Equatable {
   const UserModel({
     required this.id,
     required this.email,
+    this.name,
+    this.surname,
     this.displayName,
     this.fcmToken,
     this.birthday,
@@ -32,6 +36,8 @@ class UserModel extends Equatable {
   UserModel copyWith({
     String? id,
     String? email,
+    String? name,
+    String? surname,
     String? displayName,
     String? fcmToken,
     DateTime? birthday,
@@ -40,6 +46,8 @@ class UserModel extends Equatable {
     return UserModel(
       id: id ?? this.id,
       email: email ?? this.email,
+      name: name ?? this.name,
+      surname: surname ?? this.surname,
       displayName: displayName ?? this.displayName,
       fcmToken: fcmToken ?? this.fcmToken,
       birthday: birthday ?? this.birthday,
@@ -51,6 +59,8 @@ class UserModel extends Equatable {
   List<Object?> get props => [
     id,
     email,
+    name,
+    surname,
     displayName,
     fcmToken,
     birthday,
