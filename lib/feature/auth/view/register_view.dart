@@ -4,6 +4,8 @@ import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
 import 'package:birthday_reminder/feature/auth/view_model/auth_view_model.dart';
 import 'package:birthday_reminder/feature/auth/view_model/state/auth_state.dart';
 import 'package:birthday_reminder/product/state/base/base_state.dart';
+import 'package:birthday_reminder/product/utility/constants/prod_paddings.dart';
+import 'package:birthday_reminder/product/utility/error_translator.dart';
 import 'package:birthday_reminder/product/utility/validators.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +20,7 @@ class RegisterView extends StatefulWidget {
   State<RegisterView> createState() => _RegisterViewState();
 }
 
-class _RegisterViewState extends BaseState<RegisterView> {
+class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -27,6 +29,7 @@ class _RegisterViewState extends BaseState<RegisterView> {
   DateTime? _selectedBirthday;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  ProductPaddings? _paddings;
 
   @override
   void dispose() {
@@ -115,7 +118,8 @@ class _RegisterViewState extends BaseState<RegisterView> {
                           labelText: LocaleKeys.email.tr(),
                           prefixIcon: const Icon(Icons.email),
                         ),
-                        validator: Validators.emailValidator,
+                        validator: (value) =>
+                            translateError(Validators.emailValidator(value)),
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
@@ -129,7 +133,8 @@ class _RegisterViewState extends BaseState<RegisterView> {
                             onPressed: () => _selectBirthday(context),
                           ),
                         ),
-                        validator: Validators.birthdayValidator,
+                        validator: (value) =>
+                            translateError(Validators.birthdayValidator(value)),
                         onTap: () => _selectBirthday(context),
                       ),
                       const SizedBox(height: 16),
@@ -152,7 +157,8 @@ class _RegisterViewState extends BaseState<RegisterView> {
                             },
                           ),
                         ),
-                        validator: Validators.passwordValidator,
+                        validator: (value) =>
+                            translateError(Validators.passwordValidator(value)),
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
@@ -175,11 +181,12 @@ class _RegisterViewState extends BaseState<RegisterView> {
                             },
                           ),
                         ),
-                        validator: (value) =>
-                            Validators.confirmPasswordValidator(
-                              value,
-                              _passwordController.text,
-                            ),
+                        validator: (value) => translateError(
+                          Validators.confirmPasswordValidator(
+                            value,
+                            _passwordController.text,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton(

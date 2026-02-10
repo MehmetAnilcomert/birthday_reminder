@@ -6,6 +6,7 @@ import 'package:birthday_reminder/feature/birthday/view_model/state/birthday_for
 import 'package:birthday_reminder/product/models/birthday_model.dart';
 import 'package:birthday_reminder/product/state/base/base_state.dart';
 import 'package:birthday_reminder/product/state/container/product_state_items.dart';
+import 'package:birthday_reminder/product/utility/error_translator.dart';
 import 'package:birthday_reminder/product/utility/validators.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,8 @@ class BirthdayFormView extends StatefulWidget {
   State<BirthdayFormView> createState() => _BirthdayFormViewState();
 }
 
-class _BirthdayFormViewState extends BaseState<BirthdayFormView> {
+class _BirthdayFormViewState extends BaseState<BirthdayFormView>
+    with ErrorTranslator {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
@@ -86,7 +88,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView> {
       if (_selectedDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Lütfen doğum tarihini seçin'),
+            content: Text(LocaleKeys.please_select_birthday_date.tr()),
             backgroundColor: context.general.colorScheme.tertiary,
           ),
         );
@@ -169,7 +171,9 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView> {
                             labelText: LocaleKeys.name.tr(),
                             prefixIcon: const Icon(Icons.person),
                           ),
-                          validator: Validators.requiredValidator,
+                          validator: (value) => translateError(
+                            Validators.requiredValidator(value),
+                          ),
                           textCapitalization: TextCapitalization.words,
                         ),
                         const SizedBox(height: 16),
@@ -181,7 +185,9 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView> {
                             labelText: LocaleKeys.surname.tr(),
                             prefixIcon: const Icon(Icons.person_outline),
                           ),
-                          validator: Validators.requiredValidator,
+                          validator: (value) => translateError(
+                            Validators.requiredValidator(value),
+                          ),
                           textCapitalization: TextCapitalization.words,
                         ),
                         const SizedBox(height: 16),
@@ -201,11 +207,14 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView> {
                                       'dd MMMM yyyy',
                                       context.locale.toString(),
                                     ).format(_selectedDate!)
-                                  : 'Tarih Seçin',
+                                  : LocaleKeys.select_date.tr(),
                               style: TextStyle(
                                 color: _selectedDate != null
                                     ? context.general.colorScheme.onSurface
-                                    : context.general.colorScheme.onSurfaceVariant,
+                                    : context
+                                          .general
+                                          .colorScheme
+                                          .onSurfaceVariant,
                               ),
                             ),
                           ),
@@ -243,7 +252,9 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView> {
                             prefixIcon: const Icon(Icons.message),
                             alignLabelWithHint: true,
                           ),
-                          validator: Validators.requiredValidator,
+                          validator: (value) => translateError(
+                            Validators.requiredValidator(value),
+                          ),
                           maxLines: 4,
                           textCapitalization: TextCapitalization.sentences,
                         ),
@@ -272,7 +283,8 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView> {
                                     )
                                   : Text(
                                       LocaleKeys.save.tr(),
-                                      style: context.general.textTheme.bodyLarge,
+                                      style:
+                                          context.general.textTheme.bodyLarge,
                                     ),
                             );
                           },

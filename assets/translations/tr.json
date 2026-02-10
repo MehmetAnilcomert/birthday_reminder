@@ -1,5 +1,5 @@
 {
-  "app_name": "Doğum Günü Hatırlatıcı",
+  "app_name": "Doğum Günü Not Defteri",
   "welcome": "Hoş Geldiniz",
   "login": "Giriş Yap",
   "register": "Kayıt Ol",
@@ -24,6 +24,8 @@
   "name": "Ad",
   "surname": "Soyad",
   "birthday_date": "Doğum Tarihi",
+  "select_date": "Tarih Seçin",
+  "please_select_birthday_date": "Lütfen doğum tarihini seçin",
   "relationship": "Yakınlık Derecesi",
   "greeting_message": "Tebrik Mesajı",
   "save": "Kaydet",

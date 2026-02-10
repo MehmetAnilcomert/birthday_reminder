@@ -1,5 +1,5 @@
 {
-  "app_name": "Birthday Reminder",
+  "app_name": "Birthday Note",
   "welcome": "Welcome",
   "login": "Login",
   "register": "Register",
@@ -24,6 +24,8 @@
   "name": "Name",
   "surname": "Surname",
   "birthday_date": "Birthday Date",
+  "select_date": "Select Date",
+  "please_select_birthday_date": "Please select birthday date",
   "relationship": "Relationship",
   "greeting_message": "Greeting Message",
   "save": "Save",

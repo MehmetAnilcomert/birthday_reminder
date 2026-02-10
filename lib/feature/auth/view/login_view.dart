@@ -4,6 +4,7 @@ import 'package:birthday_reminder/feature/auth/view_model/auth_view_model.dart';
 import 'package:birthday_reminder/feature/auth/view_model/state/auth_state.dart';
 import 'package:birthday_reminder/product/navigation/app_router.gr.dart';
 import 'package:birthday_reminder/product/state/base/base_state.dart';
+import 'package:birthday_reminder/product/utility/error_translator.dart';
 import 'package:birthday_reminder/product/utility/validators.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class LoginView extends StatefulWidget {
   State<LoginView> createState() => _LoginViewState();
 }
 
-class _LoginViewState extends BaseState<LoginView> {
+class _LoginViewState extends BaseState<LoginView> with ErrorTranslator {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -76,10 +77,11 @@ class _LoginViewState extends BaseState<LoginView> {
                       const SizedBox(height: 16),
                       Text(
                         LocaleKeys.app_name.tr(),
-                        style: context.general.textTheme.headlineLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: context.general.colorScheme.primary,
-                        ),
+                        style: context.general.textTheme.headlineLarge
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: context.general.colorScheme.primary,
+                            ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
@@ -98,7 +100,8 @@ class _LoginViewState extends BaseState<LoginView> {
                           labelText: LocaleKeys.email.tr(),
                           prefixIcon: const Icon(Icons.email),
                         ),
-                        validator: Validators.emailValidator,
+                        validator: (value) =>
+                            translateError(Validators.emailValidator(value)),
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
@@ -120,7 +123,8 @@ class _LoginViewState extends BaseState<LoginView> {
                             },
                           ),
                         ),
-                        validator: Validators.passwordValidator,
+                        validator: (value) =>
+                            translateError(Validators.passwordValidator(value)),
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton(

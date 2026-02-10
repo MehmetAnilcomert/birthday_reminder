@@ -28,6 +28,8 @@ abstract class  LocaleKeys {
   static const name = 'name';
   static const surname = 'surname';
   static const birthday_date = 'birthday_date';
+  static const select_date = 'select_date';
+  static const please_select_birthday_date = 'please_select_birthday_date';
   static const relationship = 'relationship';
   static const greeting_message = 'greeting_message';
   static const save = 'save';
