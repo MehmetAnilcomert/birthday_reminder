@@ -53,5 +53,6 @@
   "relationship_other": "Diğer",
   "days_left": "gün kaldı",
   "today": "Bugün!",
-  "tomorrow": "Yarın!"
+  "tomorrow": "Yarın!",
+  "search_no_results": "Sonuç bulunamadı"
 }

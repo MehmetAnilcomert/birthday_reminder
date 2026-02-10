@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 /// This class defines padding values specific to product-related UI components.
 class ProductPadding extends EdgeInsets {
+  /// Private constructor to prevent direct instantiation.
   const ProductPadding._() : super.all(0);
 
   /// Padding for product cards.

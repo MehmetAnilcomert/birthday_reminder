@@ -6,6 +6,7 @@ import 'package:birthday_reminder/feature/auth/view_model/auth_view_model.dart';
 import 'package:birthday_reminder/feature/auth/view_model/state/auth_state.dart';
 import 'package:birthday_reminder/product/navigation/app_router.gr.dart';
 import 'package:birthday_reminder/product/state/base/base_state.dart';
+import 'package:birthday_reminder/product/utility/constants/product_padding.dart';
 import 'package:birthday_reminder/product/utility/mixin/error_translator.dart';
 import 'package:birthday_reminder/product/utility/validators.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -72,7 +73,7 @@ class _LoginViewState extends BaseState<LoginView> with ErrorTranslator {
                   size: 80,
                   color: context.general.colorScheme.primary,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: ProductPadding.medium),
                 Text(
                   LocaleKeys.app_name.tr(),
                   style: context.general.textTheme.headlineLarge?.copyWith(
@@ -81,7 +82,7 @@ class _LoginViewState extends BaseState<LoginView> with ErrorTranslator {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: ProductPadding.small),
                 Text(
                   LocaleKeys.welcome.tr(),
                   style: context.general.textTheme.bodyLarge?.copyWith(
@@ -89,7 +90,7 @@ class _LoginViewState extends BaseState<LoginView> with ErrorTranslator {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: ProductPadding.large),
                 AuthTextField(
                   controller: _emailController,
                   labelText: LocaleKeys.email.tr(),
@@ -98,7 +99,7 @@ class _LoginViewState extends BaseState<LoginView> with ErrorTranslator {
                   validator: (value) =>
                       translateError(Validators.emailValidator(value)),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: ProductPadding.medium),
                 AuthTextField(
                   controller: _passwordController,
                   labelText: LocaleKeys.password.tr(),
@@ -119,12 +120,12 @@ class _LoginViewState extends BaseState<LoginView> with ErrorTranslator {
                   validator: (value) =>
                       translateError(Validators.passwordValidator(value)),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: ProductPadding.normal),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.general.colorScheme.primary,
                     foregroundColor: context.general.colorScheme.onPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const ProductPadding.symmetricVerticalMedium(),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -153,7 +154,7 @@ class _LoginViewState extends BaseState<LoginView> with ErrorTranslator {
                               ),
                         ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: ProductPadding.medium),
                 TextButton(
                   onPressed: () {
                     context.router.push(const RegisterRoute());

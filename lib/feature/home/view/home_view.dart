@@ -9,6 +9,7 @@ import 'package:birthday_reminder/product/navigation/app_router.gr.dart';
 import 'package:birthday_reminder/product/state/base/base_state.dart';
 import 'package:birthday_reminder/product/state/container/product_state_items.dart';
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
+import 'package:birthday_reminder/product/utility/constants/product_padding.dart';
 import 'package:kartal/kartal.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -194,8 +195,8 @@ class _HomeViewState extends BaseState<HomeView> {
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 16,
+            horizontal: ProductPadding.large,
+            vertical: ProductPadding.medium,
           ),
         ),
         onChanged: (query) {
@@ -252,7 +253,7 @@ class _HomeViewState extends BaseState<HomeView> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Sonuç bulunamadı',
+                    LocaleKeys.search_no_results.tr(),
                     style: context.general.textTheme.bodyLarge?.copyWith(
                       color: context.general.colorScheme.onSurfaceVariant,
                     ),

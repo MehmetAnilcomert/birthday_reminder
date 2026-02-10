@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:birthday_reminder/product/utility/constants/product_padding.dart';
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
 
@@ -47,13 +48,13 @@ class AuthBackground extends StatelessWidget {
           // Glassmorphic Content
           Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+              padding: const ProductPadding.allNormal(),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: Container(
-                    padding: const EdgeInsets.all(24),
+                    padding: const ProductPadding.allNormal(),
                     decoration: BoxDecoration(
                       color: context.general.colorScheme.surface.withOpacity(
                         0.8,

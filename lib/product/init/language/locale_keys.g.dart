@@ -58,5 +58,6 @@ abstract class  LocaleKeys {
   static const days_left = 'days_left';
   static const today = 'today';
   static const tomorrow = 'tomorrow';
+  static const search_no_results = 'search_no_results';
 
 }

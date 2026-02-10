@@ -188,7 +188,7 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.general.colorScheme.primary,
                     foregroundColor: context.general.colorScheme.onPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const ProductPadding.symmetricVerticalMedium(),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

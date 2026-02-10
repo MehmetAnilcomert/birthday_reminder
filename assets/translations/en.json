@@ -53,5 +53,6 @@
   "relationship_other": "Other",
   "days_left": "days left",
   "today": "Today!",
-  "tomorrow": "Tomorrow!"
+  "tomorrow": "Tomorrow!",
+  "search_no_results": "No results found"
 }

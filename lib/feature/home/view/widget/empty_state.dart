@@ -1,4 +1,5 @@
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
+import 'package:birthday_reminder/product/utility/constants/product_padding.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
@@ -22,7 +23,8 @@ class EmptyBirthdayState extends StatelessWidget {
                   width: 200,
                   height: 200,
                   decoration: BoxDecoration(
-                    color: context.general.colorScheme.primaryContainer.withValues(alpha: 0.3),
+                    color: context.general.colorScheme.primaryContainer
+                        .withValues(alpha: 0.3),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -30,7 +32,8 @@ class EmptyBirthdayState extends StatelessWidget {
                   width: 150,
                   height: 150,
                   decoration: BoxDecoration(
-                    color: context.general.colorScheme.secondaryContainer.withValues(alpha: 0.4),
+                    color: context.general.colorScheme.secondaryContainer
+                        .withValues(alpha: 0.4),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -68,11 +71,23 @@ class EmptyBirthdayState extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildDecoIcon(context, Icons.celebration, context.general.colorScheme.tertiary),
+                _buildDecoIcon(
+                  context,
+                  Icons.celebration,
+                  context.general.colorScheme.tertiary,
+                ),
                 const SizedBox(width: 16),
-                _buildDecoIcon(context, Icons.card_giftcard, context.general.colorScheme.secondary),
+                _buildDecoIcon(
+                  context,
+                  Icons.card_giftcard,
+                  context.general.colorScheme.secondary,
+                ),
                 const SizedBox(width: 16),
-                _buildDecoIcon(context, Icons.emoji_emotions, context.general.colorScheme.primaryContainer),
+                _buildDecoIcon(
+                  context,
+                  Icons.emoji_emotions,
+                  context.general.colorScheme.primaryContainer,
+                ),
               ],
             ),
           ],

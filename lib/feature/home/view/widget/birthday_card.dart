@@ -1,5 +1,6 @@
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
 import 'package:birthday_reminder/product/models/birthday_model.dart';
+import 'package:birthday_reminder/product/utility/constants/product_padding.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
@@ -22,7 +23,10 @@ class BirthdayCard extends StatelessWidget {
     final isBirthdayToday = daysLeft == 0;
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(
+        horizontal: ProductPadding.medium,
+        vertical: ProductPadding.small,
+      ),
       elevation: 4,
       shadowColor: context.general.colorScheme.shadow.withOpacity(0.1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -30,7 +34,7 @@ class BirthdayCard extends StatelessWidget {
         onTap: onEdit,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const ProductPadding.allMedium(),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: isBirthdayToday
@@ -76,7 +80,7 @@ class BirthdayCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: ProductPadding.medium),
 
               // Info Section
               Expanded(
@@ -116,7 +120,7 @@ class BirthdayCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
+                        horizontal: ProductPadding.small,
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
@@ -156,7 +160,7 @@ class BirthdayCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: ProductPadding.small),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -165,7 +169,7 @@ class BirthdayCard extends StatelessWidget {
                         color: context.general.colorScheme.secondary,
                         onTap: onEdit,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: ProductPadding.small),
                       _ActionButton(
                         icon: Icons.delete_outline,
                         color: context.general.colorScheme.error,

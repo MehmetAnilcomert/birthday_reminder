@@ -4,6 +4,7 @@ import 'package:birthday_reminder/feature/birthday/view_model/birthday_form_view
 import 'package:birthday_reminder/feature/birthday/view_model/state/birthday_form_state.dart';
 import 'package:birthday_reminder/product/models/birthday_model.dart';
 import 'package:birthday_reminder/product/state/base/base_state.dart';
+import 'package:birthday_reminder/product/utility/constants/product_padding.dart';
 import 'package:birthday_reminder/product/state/container/product_state_items.dart';
 import 'package:birthday_reminder/product/utility/mixin/error_translator.dart';
 import 'package:birthday_reminder/product/utility/validators.dart';
@@ -183,7 +184,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
               ),
               body: SafeArea(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
+                  padding: const ProductPadding.allNormal(),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -237,7 +238,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                             },
                           ),
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: ProductPadding.large),
 
                         // Form Fields
                         _buildTextField(
@@ -246,14 +247,14 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                           icon: Icons.person,
                           validator: Validators.requiredValidator,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: ProductPadding.medium),
                         _buildTextField(
                           controller: _surnameController,
                           label: LocaleKeys.surname.tr(),
                           icon: Icons.person_outline,
                           validator: Validators.requiredValidator,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: ProductPadding.medium),
 
                         // Date Picker Field
                         TextFormField(
@@ -299,7 +300,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                             return null;
                           },
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: ProductPadding.medium),
 
                         // Relationship Dropdown
                         DropdownButtonFormField<RelationshipType>(
@@ -335,8 +336,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                             }
                           },
                         ),
-                        const SizedBox(height: 16),
-
+                        const SizedBox(height: ProductPadding.medium),
                         _buildTextField(
                           controller: _greetingController,
                           label: LocaleKeys.greeting_message.tr(),
@@ -359,9 +359,8 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                                     context.general.colorScheme.primary,
                                 foregroundColor:
                                     context.general.colorScheme.onPrimary,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
+                                padding:
+                                    const ProductPadding.symmetricVerticalMedium(),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -401,7 +400,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                             );
                           },
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: ProductPadding.medium),
                         TextButton(
                           onPressed: () => context.maybePop(),
                           child: Text(
