@@ -87,6 +87,18 @@ final class FirebaseNotificationService implements INotificationService {
     final body = message.notification?.body ?? message.data['body'] as String?;
 
     if (title != null && body != null) {
+      // Fallback for background translation since easy_localization might not be ready
+      String actionTitle = 'Tebrik mesajı gönder'; // Default Turkish
+      try {
+        actionTitle = LocaleKeys.send_wish.tr();
+        if (actionTitle == LocaleKeys.send_wish) {
+          // If translation failed (it returns the key), use fallback
+          actionTitle = 'Tebrik mesajı gönder';
+        }
+      } catch (e) {
+        actionTitle = 'Tebrik mesajı gönder';
+      }
+
       await flutterLocalNotificationsPlugin.show(
         message.hashCode,
         title,
@@ -102,7 +114,7 @@ final class FirebaseNotificationService implements INotificationService {
             actions: [
               AndroidNotificationAction(
                 'send_message',
-                LocaleKeys.send_wish.tr(),
+                actionTitle,
                 showsUserInterface: true,
               ),
             ],
@@ -127,23 +139,47 @@ final class FirebaseNotificationService implements INotificationService {
         // Extract message and phone number from the new single-birthday payload
         final message = data['greetingMessage'] as String? ?? '';
         final phoneNumber = data['phoneNumber'] as String? ?? '';
+        final birthdayId = data['birthdayId'] as String? ?? '';
+
+        print('Notification action triggered: send_message');
+        print('Birthday ID: $birthdayId');
+        print('Message: $message');
+        print('Original Phone: $phoneNumber');
 
         if (message.isNotEmpty) {
+          // Clean phone number: remove any non-digit characters except '+'
+          String cleanNumber = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
+          print('Cleaned Phone: $cleanNumber');
+
           // Construct WhatsApp URL with or without phone number
           final String whatsappUrl;
-          if (phoneNumber.isNotEmpty) {
+          if (cleanNumber.isNotEmpty) {
+            // Ensure no leading 0 (common mistake for wa.me)
+            if (cleanNumber.startsWith('0')) {
+              // Assuming Turkish number or similar if starts with 0
+              cleanNumber = '90${cleanNumber.substring(1)}';
+            }
+
             // Direct to specific contact
             whatsappUrl =
-                'https://wa.me/$phoneNumber?text=${Uri.encodeComponent(message)}';
+                'https://wa.me/$cleanNumber?text=${Uri.encodeComponent(message)}';
           } else {
             // Let user choose contact
             whatsappUrl = 'https://wa.me/?text=${Uri.encodeComponent(message)}';
           }
 
           final uri = Uri.parse(whatsappUrl);
+          print('Launching WhatsApp: $whatsappUrl');
+
           if (await canLaunchUrl(uri)) {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } else {
+            print('Could not launch WhatsApp URL');
+            // Fallback: Try a simpler URL or SMS if needed,
+            // but for now just logging to understand why it fails
           }
+        } else {
+          print('Message or Phone is empty, cannot redirect');
         }
       } catch (e) {
         // Handle error silently
