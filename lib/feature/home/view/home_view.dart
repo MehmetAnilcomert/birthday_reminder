@@ -10,11 +10,8 @@ import 'package:birthday_reminder/product/state/base/base_state.dart';
 import 'package:birthday_reminder/product/state/container/product_state_items.dart';
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
 import 'package:kartal/kartal.dart';
-import 'package:birthday_reminder/product/state/container/product_state_container.dart';
-import 'package:birthday_reminder/product/service/notification/notification_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
@@ -57,173 +54,25 @@ class _HomeViewState extends BaseState<HomeView> {
               }
             },
             child: Scaffold(
-              body: Column(
+              body: Stack(
                 children: [
-                  // Search Bar
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: context.general.colorScheme.primary,
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(24),
-                        bottomRight: Radius.circular(24),
-                      ),
-                    ),
-                    child: SafeArea(
-                      bottom: false,
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  LocaleKeys.app_name.tr(),
-                                  style: context.general.textTheme.headlineMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: context.general.colorScheme.onPrimary,
-                                  ),
-                                ),
-                              ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.logout,
-                                  color: context.general.colorScheme.onPrimary,
-                                ),
-                                onPressed: () {
-                                  ProductStateItems.authViewModel.signOut();
-                                  context.router.replaceAll([
-                                    const LoginRoute(),
-                                  ]);
-                                },
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          TextField(
-                            controller: _searchController,
-                            decoration: InputDecoration(
-                              hintText: LocaleKeys.search.tr(),
-                              prefixIcon: const Icon(Icons.search),
-                              filled: true,
-                              fillColor: context.general.colorScheme.surface,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide.none,
-                              ),
-                            ),
-                            onChanged: (query) {
-                              context.read<HomeViewModel>().updateSearchQuery(
-                                query,
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                  // Background color
+                  Container(color: context.general.colorScheme.surface),
+
+                  // Content
+                  Column(
+                    children: [
+                      _buildHeader(context),
+                      Expanded(child: _buildBody(context)),
+                    ],
                   ),
 
-                  // Birthday List
-                  Expanded(
-                    child: BlocBuilder<HomeViewModel, HomeState>(
-                      builder: (context, state) {
-                        if (state.status == HomeStatus.loading) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-
-                        if (state.status == HomeStatus.error) {
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.error_outline,
-                                  size: 64,
-                                  color: context.general.colorScheme.error,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  state.errorMessage ?? LocaleKeys.error.tr(),
-                                  style: context.general.textTheme.bodyLarge?.copyWith(
-                                    color: context.general.colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-
-                        if (state.filteredBirthdays.isEmpty &&
-                            state.searchQuery.isEmpty) {
-                          return const EmptyBirthdayState();
-                        }
-
-                        if (state.filteredBirthdays.isEmpty &&
-                            state.searchQuery.isNotEmpty) {
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.search_off,
-                                  size: 64,
-                                  color: context.general.colorScheme.outlineVariant,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Sonuç bulunamadı',
-                                  style: context.general.textTheme.bodyLarge?.copyWith(
-                                    color: context.general.colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-
-                        return RefreshIndicator(
-                          onRefresh: () async {
-                            final user =
-                                ProductStateItems.authViewModel.state.user;
-                            if (user != null) {
-                              await context.read<HomeViewModel>().loadBirthdays(
-                                user.id,
-                              );
-                            }
-                          },
-                          child: ListView.builder(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            itemCount: state.filteredBirthdays.length,
-                            itemBuilder: (context, index) {
-                              final birthday = state.filteredBirthdays[index];
-                              return BirthdayCard(
-                                birthday: birthday,
-                                onEdit: () async {
-                                  final result = await context.router.push(
-                                    BirthdayFormRoute(birthday: birthday),
-                                  );
-                                  if (result == true) {
-                                    final user = ProductStateItems
-                                        .authViewModel
-                                        .state
-                                        .user;
-                                    if (user != null && context.mounted) {
-                                      context
-                                          .read<HomeViewModel>()
-                                          .loadBirthdays(user.id);
-                                    }
-                                  }
-                                },
-                                onDelete: () {
-                                  _showDeleteConfirmation(context, birthday.id);
-                                },
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
+                  // Search Bar Positioned
+                  Positioned(
+                    top: 140,
+                    left: 16,
+                    right: 16,
+                    child: _buildSearchBar(context),
                   ),
                 ],
               ),
@@ -239,7 +88,215 @@ class _HomeViewState extends BaseState<HomeView> {
                 },
                 icon: const Icon(Icons.add),
                 label: Text(LocaleKeys.add_birthday.tr()),
+                elevation: 4,
               ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      height: 180,
+      padding: const EdgeInsets.fromLTRB(24, 60, 24, 40),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            context.general.colorScheme.primary,
+            context.general.colorScheme.primaryContainer,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: context.general.colorScheme.shadow.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  LocaleKeys.welcome.tr(), // Or "Hello,"
+                  style: context.general.textTheme.titleMedium?.copyWith(
+                    color: context.general.colorScheme.onPrimary.withOpacity(
+                      0.8,
+                    ),
+                  ),
+                ),
+                Text(
+                  LocaleKeys.app_name.tr(),
+                  style: context.general.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: context.general.colorScheme.onPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.logout_rounded,
+              color: context.general.colorScheme.onPrimary,
+            ),
+            onPressed: () {
+              ProductStateItems.authViewModel.signOut();
+              context.router.replaceAll([const LoginRoute()]);
+            },
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.white.withOpacity(0.1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: context.general.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: context.general.colorScheme.shadow.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: _searchController,
+        decoration: InputDecoration(
+          hintText: LocaleKeys.search.tr(),
+          hintStyle: TextStyle(
+            color: context.general.colorScheme.onSurfaceVariant,
+          ),
+          prefixIcon: Icon(
+            Icons.search,
+            color: context.general.colorScheme.primary,
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
+        ),
+        onChanged: (query) {
+          context.read<HomeViewModel>().updateSearchQuery(query);
+        },
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 40), // Space for SearchBar
+      child: BlocBuilder<HomeViewModel, HomeState>(
+        builder: (context, state) {
+          if (state.status == HomeStatus.loading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state.status == HomeStatus.error) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: context.general.colorScheme.error,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    state.errorMessage ?? LocaleKeys.error.tr(),
+                    style: context.general.textTheme.bodyLarge?.copyWith(
+                      color: context.general.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          if (state.filteredBirthdays.isEmpty && state.searchQuery.isEmpty) {
+            return const EmptyBirthdayState();
+          }
+
+          if (state.filteredBirthdays.isEmpty && state.searchQuery.isNotEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.search_off,
+                    size: 64,
+                    color: context.general.colorScheme.outlineVariant,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Sonuç bulunamadı',
+                    style: context.general.textTheme.bodyLarge?.copyWith(
+                      color: context.general.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: () async {
+              final user = ProductStateItems.authViewModel.state.user;
+              if (user != null) {
+                await context.read<HomeViewModel>().loadBirthdays(user.id);
+              }
+            },
+            child: ListView.builder(
+              padding: const EdgeInsets.fromLTRB(
+                0,
+                8,
+                0,
+                80,
+              ), // Bottom padding for FAB
+              itemCount: state.filteredBirthdays.length,
+              itemBuilder: (context, index) {
+                final birthday = state.filteredBirthdays[index];
+                return BirthdayCard(
+                  birthday: birthday,
+                  onEdit: () async {
+                    final result = await context.router.push(
+                      BirthdayFormRoute(birthday: birthday),
+                    );
+                    if (result == true) {
+                      final user = ProductStateItems.authViewModel.state.user;
+                      if (user != null && context.mounted) {
+                        context.read<HomeViewModel>().loadBirthdays(user.id);
+                      }
+                    }
+                  },
+                  onDelete: () {
+                    _showDeleteConfirmation(context, birthday.id);
+                  },
+                );
+              },
             ),
           );
         },
@@ -253,6 +310,7 @@ class _HomeViewState extends BaseState<HomeView> {
       builder: (dialogContext) => AlertDialog(
         title: Text(LocaleKeys.delete_birthday.tr()),
         content: Text(LocaleKeys.delete_confirmation.tr()),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
@@ -266,11 +324,16 @@ class _HomeViewState extends BaseState<HomeView> {
                 SnackBar(
                   content: Text(LocaleKeys.birthday_deleted.tr()),
                   backgroundColor: context.general.colorScheme.tertiary,
+                  behavior: SnackBarBehavior.floating,
                 ),
               );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: context.general.colorScheme.error,
+              foregroundColor: context.general.colorScheme.onError,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: Text(LocaleKeys.yes.tr()),
           ),
@@ -278,5 +341,4 @@ class _HomeViewState extends BaseState<HomeView> {
       ),
     );
   }
-
 }

@@ -11,6 +11,7 @@ class BirthdayCard extends StatelessWidget {
     required this.onDelete,
     super.key,
   });
+
   final BirthdayModel birthday;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -18,114 +19,157 @@ class BirthdayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final daysLeft = birthday.daysUntilBirthday();
+    final isBirthdayToday = daysLeft == 0;
 
     return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 4,
+      shadowColor: context.general.colorScheme.shadow.withOpacity(0.1),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: onEdit,
         borderRadius: BorderRadius.circular(16),
-        child: Padding(
+        child: Container(
           padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: isBirthdayToday
+                ? Border.all(
+                    color: context.general.colorScheme.primary,
+                    width: 2,
+                  )
+                : null,
+          ),
           child: Row(
             children: [
-              // Avatar
+              // Avatar with Gradient
               Container(
-                width: 56,
-                height: 56,
+                width: 60,
+                height: 60,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      context.general.colorScheme.primary.withValues(alpha: 0.8),
-                      context.general.colorScheme.secondary.withValues(alpha: 0.8),
+                      context.general.colorScheme.primaryContainer,
+                      context.general.colorScheme.primary,
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: context.general.colorScheme.primary.withOpacity(
+                        0.3,
+                      ),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Center(
                   child: Text(
-                    birthday.name[0].toUpperCase() +
-                        birthday.surname[0].toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                    '${birthday.name[0]}${birthday.surname[0]}'.toUpperCase(),
+                    style: context.general.textTheme.titleLarge?.copyWith(
                       color: context.general.colorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
               const SizedBox(width: 16),
 
-              // Info
+              // Info Section
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       birthday.fullName,
-                      style: context.general.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
+                      style: context.general.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: context.general.colorScheme.onSurface,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      _getRelationshipText(birthday.relationship),
-                      style: context.general.textTheme.bodyMedium?.copyWith(
-                        color: context.general.colorScheme.onSurfaceVariant,
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.cake,
+                          size: 14,
+                          color: context.general.colorScheme.secondary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          DateFormat(
+                            'd MMM',
+                            context.locale.toString(),
+                          ).format(birthday.birthdayDate),
+                          style: context.general.textTheme.bodyMedium?.copyWith(
+                            color: context.general.colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      DateFormat(
-                        'dd MMMM',
-                        context.locale.toString(),
-                      ).format(birthday.birthdayDate),
-                      style: context.general.textTheme.bodyMedium?.copyWith(
-                        color: context.general.colorScheme.onSurfaceVariant,
+                      decoration: BoxDecoration(
+                        color:
+                            context.general.colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        _getRelationshipText(birthday.relationship),
+                        style: context.general.textTheme.labelSmall?.copyWith(
+                          color: context.general.colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
 
-              // Days Left Badge
+              // Days Left & Actions
               Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
+                      horizontal: 10,
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: _getDaysLeftColor(daysLeft),
-                      borderRadius: BorderRadius.circular(8),
+                      color: _getDaysLeftColor(context, daysLeft),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       _getDaysLeftText(daysLeft),
-                      style: context.general.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
+                      style: context.general.textTheme.labelMedium?.copyWith(
                         color: context.general.colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit, size: 20),
-                        onPressed: onEdit,
+                      _ActionButton(
+                        icon: Icons.edit_outlined,
                         color: context.general.colorScheme.secondary,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
+                        onTap: onEdit,
                       ),
                       const SizedBox(width: 8),
-                      IconButton(
-                        icon: const Icon(Icons.delete, size: 20),
-                        onPressed: onDelete,
+                      _ActionButton(
+                        icon: Icons.delete_outline,
                         color: context.general.colorScheme.error,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
+                        onTap: onDelete,
                       ),
                     ],
                   ),
@@ -139,28 +183,52 @@ class BirthdayCard extends StatelessWidget {
   }
 
   String _getRelationshipText(RelationshipType type) {
-    switch (type) {
-      case RelationshipType.family:
-        return LocaleKeys.relationship_family.tr();
-      case RelationshipType.friend:
-        return LocaleKeys.relationship_friend.tr();
-      case RelationshipType.colleague:
-        return LocaleKeys.relationship_colleague.tr();
-      case RelationshipType.other:
-        return LocaleKeys.relationship_other.tr();
-    }
+    if (type == RelationshipType.family)
+      return LocaleKeys.relationship_family.tr();
+    if (type == RelationshipType.friend)
+      return LocaleKeys.relationship_friend.tr();
+    if (type == RelationshipType.colleague)
+      return LocaleKeys.relationship_colleague.tr();
+    return LocaleKeys.relationship_other.tr();
   }
 
-  Color _getDaysLeftColor(int days) {
-    // Using tertiary for birthday today, primary for upcoming
-    if (days == 0) return const Color(0xFFFF1744); // Birthday today - red
-    if (days <= 7) return const Color(0xFFFF6E40); // Upcoming - orange
-    return const Color(0xFF9E9E9E); // Past - grey
+  Color _getDaysLeftColor(BuildContext context, int days) {
+    if (days == 0) return context.general.colorScheme.primary;
+    if (days <= 7) return context.general.colorScheme.tertiary;
+    return context.general.colorScheme.outline;
   }
 
   String _getDaysLeftText(int days) {
     if (days == 0) return LocaleKeys.today.tr();
     if (days == 1) return LocaleKeys.tomorrow.tr();
     return '$days ${LocaleKeys.days_left.tr()}';
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, size: 18, color: color),
+      ),
+    );
   }
 }

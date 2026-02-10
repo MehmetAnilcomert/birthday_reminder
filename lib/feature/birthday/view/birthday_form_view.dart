@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
-
 import 'package:birthday_reminder/feature/birthday/view_model/birthday_form_view_model.dart';
 import 'package:birthday_reminder/feature/birthday/view_model/state/birthday_form_state.dart';
 import 'package:birthday_reminder/product/models/birthday_model.dart';
@@ -29,11 +28,15 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
   final _greetingController = TextEditingController();
+  final _dateController =
+      TextEditingController(); // Controller to show selected date text
 
   DateTime? _selectedDate;
   RelationshipType _selectedRelationship = RelationshipType.friend;
 
   bool get isEditing => widget.birthday != null;
+
+  bool _isInitialized = false;
 
   @override
   void initState() {
@@ -43,7 +46,26 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
       _surnameController.text = widget.birthday!.surname;
       _greetingController.text = widget.birthday!.greetingMessage;
       _selectedDate = widget.birthday!.birthdayDate;
+      // _updateDateController(); // Moved to didChangeDependencies
       _selectedRelationship = widget.birthday!.relationship;
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized && isEditing) {
+      _updateDateController();
+      _isInitialized = true;
+    }
+  }
+
+  void _updateDateController() {
+    if (_selectedDate != null) {
+      _dateController.text = DateFormat(
+        'dd MMMM yyyy',
+        context.locale.toString(),
+      ).format(_selectedDate!);
     }
   }
 
@@ -52,6 +74,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
     _nameController.dispose();
     _surnameController.dispose();
     _greetingController.dispose();
+    _dateController.dispose();
     super.dispose();
   }
 
@@ -63,14 +86,9 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
       lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: context.general.colorScheme.primary,
-              onPrimary: context.general.colorScheme.onPrimary,
-              surface: context.general.colorScheme.surface,
-              onSurface: context.general.colorScheme.onSurface,
-            ),
-          ),
+          data: Theme.of(
+            context,
+          ).copyWith(colorScheme: context.general.colorScheme),
           child: child!,
         );
       },
@@ -79,6 +97,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
+        _updateDateController();
       });
     }
   }
@@ -133,7 +152,8 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                       ? LocaleKeys.birthday_updated.tr()
                       : LocaleKeys.birthday_added.tr(),
                 ),
-                backgroundColor: context.general.colorScheme.tertiary,
+                backgroundColor:
+                    context.general.colorScheme.primary, // Success color
               ),
             );
             context.maybePop(true);
@@ -154,7 +174,12 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                   isEditing
                       ? LocaleKeys.edit_birthday.tr()
                       : LocaleKeys.add_birthday.tr(),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
+                centerTitle: true,
+                elevation: 0,
+                backgroundColor: context.general.colorScheme.surface,
+                foregroundColor: context.general.colorScheme.onSurface,
               ),
               body: SafeArea(
                 child: SingleChildScrollView(
@@ -164,69 +189,137 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Name Field
-                        TextFormField(
+                        // Avatar Placeholder Animation
+                        Center(
+                          child: TweenAnimationBuilder<double>(
+                            tween: Tween(begin: 0, end: 1),
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.elasticOut,
+                            builder: (context, value, child) {
+                              return Transform.scale(
+                                scale: value,
+                                child: Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        context
+                                            .general
+                                            .colorScheme
+                                            .primaryContainer,
+                                        context.general.colorScheme.primary,
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: context
+                                            .general
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(0.3),
+                                        blurRadius: 15,
+                                        offset: const Offset(0, 5),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Icon(
+                                    isEditing ? Icons.edit : Icons.person_add,
+                                    size: 50,
+                                    color:
+                                        context.general.colorScheme.onPrimary,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+
+                        // Form Fields
+                        _buildTextField(
                           controller: _nameController,
-                          decoration: InputDecoration(
-                            labelText: LocaleKeys.name.tr(),
-                            prefixIcon: const Icon(Icons.person),
-                          ),
-                          validator: (value) => translateError(
-                            Validators.requiredValidator(value),
-                          ),
-                          textCapitalization: TextCapitalization.words,
+                          label: LocaleKeys.name.tr(),
+                          icon: Icons.person,
+                          validator: Validators.requiredValidator,
                         ),
                         const SizedBox(height: 16),
-
-                        // Surname Field
-                        TextFormField(
+                        _buildTextField(
                           controller: _surnameController,
-                          decoration: InputDecoration(
-                            labelText: LocaleKeys.surname.tr(),
-                            prefixIcon: const Icon(Icons.person_outline),
-                          ),
-                          validator: (value) => translateError(
-                            Validators.requiredValidator(value),
-                          ),
-                          textCapitalization: TextCapitalization.words,
+                          label: LocaleKeys.surname.tr(),
+                          icon: Icons.person_outline,
+                          validator: Validators.requiredValidator,
                         ),
                         const SizedBox(height: 16),
 
-                        // Birthday Date Picker
-                        InkWell(
+                        // Date Picker Field
+                        TextFormField(
+                          controller: _dateController,
+                          readOnly: true,
                           onTap: _selectDate,
-                          borderRadius: BorderRadius.circular(12),
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              labelText: LocaleKeys.birthday_date.tr(),
-                              prefixIcon: const Icon(Icons.cake),
+                          decoration: InputDecoration(
+                            labelText: LocaleKeys.birthday_date.tr(),
+                            prefixIcon: Icon(
+                              Icons.cake,
+                              color: context.general.colorScheme.primary,
                             ),
-                            child: Text(
-                              _selectedDate != null
-                                  ? DateFormat(
-                                      'dd MMMM yyyy',
-                                      context.locale.toString(),
-                                    ).format(_selectedDate!)
-                                  : LocaleKeys.select_date.tr(),
-                              style: TextStyle(
-                                color: _selectedDate != null
-                                    ? context.general.colorScheme.onSurface
-                                    : context
-                                          .general
-                                          .colorScheme
-                                          .onSurfaceVariant,
+                            suffixIcon: Icon(
+                              Icons.calendar_today,
+                              color: context.general.colorScheme.secondary,
+                            ),
+                            filled: true,
+                            fillColor: context
+                                .general
+                                .colorScheme
+                                .surfaceContainerHighest
+                                .withOpacity(0.3),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: context.general.colorScheme.primary,
+                                width: 2,
                               ),
                             ),
                           ),
+                          validator: (value) {
+                            if (_selectedDate == null)
+                              return LocaleKeys.please_select_birthday_date
+                                  .tr();
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 16),
 
                         // Relationship Dropdown
                         DropdownButtonFormField<RelationshipType>(
-                          initialValue: _selectedRelationship,
+                          value: _selectedRelationship,
                           decoration: InputDecoration(
                             labelText: LocaleKeys.relationship.tr(),
-                            prefixIcon: const Icon(Icons.people),
+                            prefixIcon: Icon(
+                              Icons.people,
+                              color: context.general.colorScheme.primary,
+                            ),
+                            filled: true,
+                            fillColor: context
+                                .general
+                                .colorScheme
+                                .surfaceContainerHighest
+                                .withOpacity(0.3),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
                           ),
                           items: RelationshipType.values.map((type) {
                             return DropdownMenuItem(
@@ -244,23 +337,16 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                         ),
                         const SizedBox(height: 16),
 
-                        // Greeting Message Field
-                        TextFormField(
+                        _buildTextField(
                           controller: _greetingController,
-                          decoration: InputDecoration(
-                            labelText: LocaleKeys.greeting_message.tr(),
-                            prefixIcon: const Icon(Icons.message),
-                            alignLabelWithHint: true,
-                          ),
-                          validator: (value) => translateError(
-                            Validators.requiredValidator(value),
-                          ),
-                          maxLines: 4,
-                          textCapitalization: TextCapitalization.sentences,
+                          label: LocaleKeys.greeting_message.tr(),
+                          icon: Icons.message,
+                          maxLines: 3,
+                          validator: Validators.requiredValidator,
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 40),
 
-                        // Save Button
+                        // Buttons
                         BlocBuilder<BirthdayFormViewModel, BirthdayFormState>(
                           builder: (context, state) {
                             return ElevatedButton(
@@ -269,32 +355,62 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                                   ? null
                                   : () => _handleSave(context),
                               style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    context.general.colorScheme.primary,
+                                foregroundColor:
+                                    context.general.colorScheme.onPrimary,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 16,
                                 ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 4,
+                                shadowColor: context.general.colorScheme.primary
+                                    .withOpacity(0.4),
                               ),
                               child: state.status == BirthdayFormStatus.loading
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
+                                  ? SizedBox(
+                                      height: 24,
+                                      width: 24,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              context
+                                                  .general
+                                                  .colorScheme
+                                                  .onPrimary,
+                                            ),
                                       ),
                                     )
                                   : Text(
                                       LocaleKeys.save.tr(),
-                                      style:
-                                          context.general.textTheme.bodyLarge,
+                                      style: context
+                                          .general
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: context
+                                                .general
+                                                .colorScheme
+                                                .onPrimary,
+                                          ),
                                     ),
                             );
                           },
                         ),
                         const SizedBox(height: 16),
-
-                        // Cancel Button
                         TextButton(
                           onPressed: () => context.maybePop(),
-                          child: Text(LocaleKeys.cancel.tr()),
+                          child: Text(
+                            LocaleKeys.cancel.tr(),
+                            style: TextStyle(
+                              color: context.general.colorScheme.secondary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -308,16 +424,56 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
     );
   }
 
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    int maxLines = 1,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: context.general.colorScheme.primary),
+        filled: true,
+        fillColor: context.general.colorScheme.surfaceContainerHighest
+            .withOpacity(0.3),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: context.general.colorScheme.primary,
+            width: 2,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: context.general.colorScheme.error),
+        ),
+      ),
+      maxLines: maxLines,
+      textCapitalization: TextCapitalization.sentences,
+      validator: validator != null
+          ? (value) => translateError(validator(value))
+          : null,
+    );
+  }
+
   String _getRelationshipText(RelationshipType type) {
-    switch (type) {
-      case RelationshipType.family:
-        return LocaleKeys.relationship_family.tr();
-      case RelationshipType.friend:
-        return LocaleKeys.relationship_friend.tr();
-      case RelationshipType.colleague:
-        return LocaleKeys.relationship_colleague.tr();
-      case RelationshipType.other:
-        return LocaleKeys.relationship_other.tr();
-    }
+    if (type == RelationshipType.family)
+      return LocaleKeys.relationship_family.tr();
+    if (type == RelationshipType.friend)
+      return LocaleKeys.relationship_friend.tr();
+    if (type == RelationshipType.colleague)
+      return LocaleKeys.relationship_colleague.tr();
+    return LocaleKeys.relationship_other.tr();
   }
 }
