@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
 import 'package:birthday_reminder/product/service/notification/notification_service.dart';
+import 'package:birthday_reminder/product/services/encryption_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -62,6 +63,33 @@ final class FirebaseNotificationService implements INotificationService {
     _messaging.onTokenRefresh.listen((token) {
       // Token update logic handled by listener in AuthViewModel or similar
     });
+
+    // Check if the app was launched from a notification (Terminated State)
+    final launchDetails = await _localNotifications
+        .getNotificationAppLaunchDetails();
+    if (launchDetails != null && launchDetails.didNotificationLaunchApp) {
+      if (launchDetails.notificationResponse != null) {
+        // Delay slightly to ensure app state/router is ready
+        unawaited(
+          Future.delayed(const Duration(seconds: 1), () {
+            _handleNotificationResponse(launchDetails.notificationResponse!);
+          }),
+        );
+      }
+    }
+
+    // Handle background to foreground transition via FCM (if notification clicked)
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      // If we handle notifications manually via local notifications,
+      // this might be redundant, but good to have for direct FCM notifications.
+      showNotification(message);
+    });
+
+    // Check for initial message (if app was terminated and opened via FCM directly)
+    final initialMessage = await _messaging.getInitialMessage();
+    if (initialMessage != null) {
+      showNotification(initialMessage);
+    }
   }
 
   Future<void> _createAndroidChannel() async {
@@ -135,54 +163,69 @@ final class FirebaseNotificationService implements INotificationService {
     if (details.actionId == 'send_message' && details.payload != null) {
       try {
         final data = jsonDecode(details.payload!) as Map<String, dynamic>;
+        final encryptionService = EncryptionService();
 
-        // Extract message and phone number from the new single-birthday payload
-        final message = data['greetingMessage'] as String? ?? '';
-        final phoneNumber = data['phoneNumber'] as String? ?? '';
+        // Extract encrypted data and credentials from payload
+        final encGreeting = data['encryptedGreetingMessage'] as String? ?? '';
+        final encPhone = data['encryptedPhoneNumber'] as String? ?? '';
+        final userId = data['userId'] as String? ?? '';
+        final userEmail = data['userEmail'] as String? ?? '';
         final birthdayId = data['birthdayId'] as String? ?? '';
 
-        print('Notification action triggered: send_message');
-        print('Birthday ID: $birthdayId');
-        print('Message: $message');
-        print('Original Phone: $phoneNumber');
+        String message = '';
+        String phoneNumber = '';
+
+        if (userId.isNotEmpty && userEmail.isNotEmpty) {
+          try {
+            message = await encryptionService.decryptString(
+              encGreeting,
+              userId,
+              userEmail,
+            );
+            phoneNumber = await encryptionService.decryptString(
+              encPhone,
+              userId,
+              userEmail,
+            );
+          } catch (e) {
+            // Check if backend sent plaintext as fallback
+            message = data['greetingMessage'] as String? ?? '';
+            phoneNumber = data['phoneNumber'] as String? ?? '';
+          }
+        } else {
+          // Fallback to plaintext if credentials are missing
+          message = data['greetingMessage'] as String? ?? '';
+          phoneNumber = data['phoneNumber'] as String? ?? '';
+        }
 
         if (message.isNotEmpty) {
-          // Clean phone number: remove any non-digit characters except '+'
+          // Clean phone number: remove any non-digit characters
           String cleanNumber = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
-          print('Cleaned Phone: $cleanNumber');
 
-          // Construct WhatsApp URL with or without phone number
+          // Construct WhatsApp URL
           final String whatsappUrl;
           if (cleanNumber.isNotEmpty) {
-            // Ensure no leading 0 (common mistake for wa.me)
             if (cleanNumber.startsWith('0')) {
-              // Assuming Turkish number or similar if starts with 0
               cleanNumber = '90${cleanNumber.substring(1)}';
             }
-
-            // Direct to specific contact
             whatsappUrl =
                 'https://wa.me/$cleanNumber?text=${Uri.encodeComponent(message)}';
           } else {
-            // Let user choose contact
             whatsappUrl = 'https://wa.me/?text=${Uri.encodeComponent(message)}';
           }
 
           final uri = Uri.parse(whatsappUrl);
-          print('Launching WhatsApp: $whatsappUrl');
 
           if (await canLaunchUrl(uri)) {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
           } else {
             print('Could not launch WhatsApp URL');
-            // Fallback: Try a simpler URL or SMS if needed,
-            // but for now just logging to understand why it fails
           }
         } else {
-          print('Message or Phone is empty, cannot redirect');
+          print('Message is empty, cannot redirect');
         }
       } catch (e) {
-        // Handle error silently
+        print('Error handling notification response: $e');
       }
     }
   }
