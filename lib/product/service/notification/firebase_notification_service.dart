@@ -77,21 +77,24 @@ final class FirebaseNotificationService implements INotificationService {
         ?.createNotificationChannel(channel);
   }
 
-  void _handleForegroundMessage(RemoteMessage message) {
-    final notification = message.notification;
+  static Future<void> showNotification(RemoteMessage message) async {
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     final android = message.notification?.android;
+    final title =
+        message.notification?.title ?? message.data['title'] as String?;
+    final body = message.notification?.body ?? message.data['body'] as String?;
 
-    if (notification != null && android != null) {
-      _localNotifications.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
+    if (title != null && body != null) {
+      await flutterLocalNotificationsPlugin.show(
+        message.hashCode,
+        title,
+        body,
         NotificationDetails(
           android: AndroidNotificationDetails(
             _channelId,
             _channelName,
             channelDescription: _channelDescription,
-            icon: android.smallIcon,
+            icon: android?.smallIcon ?? '@mipmap/ic_launcher',
             priority: Priority.max,
             importance: Importance.max,
             actions: [
@@ -108,14 +111,36 @@ final class FirebaseNotificationService implements INotificationService {
     }
   }
 
+  void _handleForegroundMessage(RemoteMessage message) {
+    showNotification(message);
+  }
+
   Future<void> _handleNotificationResponse(
     NotificationResponse details,
   ) async {
     if (details.actionId == 'send_message' && details.payload != null) {
       try {
         final data = jsonDecode(details.payload!) as Map<String, dynamic>;
-        final message =
+        String? message;
+
+        // Try to get message from birthdays list (new backend structure)
+        if (data.containsKey('birthdays')) {
+          try {
+            final birthdays =
+                jsonDecode(data['birthdays'] as String) as List<dynamic>;
+            if (birthdays.isNotEmpty) {
+              final firstBirthday = birthdays.first as Map<String, dynamic>;
+              message = firstBirthday['greetingMessage'] as String?;
+            }
+          } catch (_) {
+            // failed to parse birthdays
+          }
+        }
+
+        // Fallback to direct keys
+        message ??=
             data['greetingMessage'] as String? ?? data['message'] as String?;
+
         if (message != null && message.isNotEmpty) {
           final uri = Uri.parse(
             'https://wa.me/?text=${Uri.encodeComponent(message)}',
@@ -162,8 +187,15 @@ final class FirebaseNotificationService implements INotificationService {
 // Top-level function for background message handling
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you need to access other Firebase services here, you must initialize them.
-  // await Firebase.initializeApp();
-  // But usually not needed for simple display.
-  print('Handling a background message: ${message.messageId}');
+  // If notification payload exists, system handles it.
+  // Unless user wants to override (not recommended to duplicate).
+  // But user specifically wants buttons, which system notification destroys in background.
+  // To get buttons in background, one MUST use Data Messages.
+  // If we receive a Data Message (notification: null), we show it manually.
+
+  if (message.notification == null) {
+    // Initialize for background isolation if needed?
+    // Actually FlutterLocalNotificationsPlugin can be used directly.
+    await FirebaseNotificationService.showNotification(message);
+  }
 }
