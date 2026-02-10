@@ -6,7 +6,7 @@ import 'package:birthday_reminder/feature/birthday/view_model/state/birthday_for
 import 'package:birthday_reminder/product/models/birthday_model.dart';
 import 'package:birthday_reminder/product/state/base/base_state.dart';
 import 'package:birthday_reminder/product/state/container/product_state_items.dart';
-import 'package:birthday_reminder/product/utility/error_translator.dart';
+import 'package:birthday_reminder/product/utility/mixin/error_translator.dart';
 import 'package:birthday_reminder/product/utility/validators.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';

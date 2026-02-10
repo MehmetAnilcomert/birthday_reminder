@@ -4,7 +4,7 @@ import 'package:birthday_reminder/feature/auth/view_model/auth_view_model.dart';
 import 'package:birthday_reminder/feature/auth/view_model/state/auth_state.dart';
 import 'package:birthday_reminder/product/navigation/app_router.gr.dart';
 import 'package:birthday_reminder/product/state/base/base_state.dart';
-import 'package:birthday_reminder/product/utility/error_translator.dart';
+import 'package:birthday_reminder/product/utility/mixin/error_translator.dart';
 import 'package:birthday_reminder/product/utility/validators.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
