@@ -31,6 +31,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _greetingController = TextEditingController();
   final _dateController =
       TextEditingController(); // Controller to show selected date text
@@ -48,6 +49,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
     if (isEditing) {
       _nameController.text = widget.birthday!.name;
       _surnameController.text = widget.birthday!.surname;
+      _phoneController.text = widget.birthday!.phoneNumber ?? '';
       _greetingController.text = widget.birthday!.greetingMessage;
       _selectedDate = widget.birthday!.birthdayDate;
       // _updateDateController(); // Moved to didChangeDependencies
@@ -77,6 +79,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
   void dispose() {
     _nameController.dispose();
     _surnameController.dispose();
+    _phoneController.dispose();
     _greetingController.dispose();
     _dateController.dispose();
     super.dispose();
@@ -129,6 +132,9 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
         birthdayDate: _selectedDate!,
         relationship: _selectedRelationship,
         greetingMessage: _greetingController.text.trim(),
+        phoneNumber: _phoneController.text.trim().isEmpty
+            ? null
+            : _phoneController.text.trim(),
         createdAt: widget.birthday?.createdAt ?? DateTime.now(),
         updatedAt: isEditing ? DateTime.now() : null,
       );
@@ -339,6 +345,65 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                               });
                             }
                           },
+                        ),
+                        const SizedBox(height: ProductPadding.medium),
+
+                        // Phone Number Field
+                        TextFormField(
+                          controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
+                            labelText: LocaleKeys.phone_number.tr(),
+                            hintText: '(5..)......',
+                            prefixIcon: Icon(
+                              Icons.phone,
+                              color: context.general.colorScheme.primary,
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                Icons.info_outline,
+                                color: context.general.colorScheme.primary,
+                              ),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (dialogContext) => AlertDialog(
+                                    title: Text(LocaleKeys.phone_number.tr()),
+                                    content: Text(LocaleKeys.phone_info.tr()),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(dialogContext),
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              tooltip: LocaleKeys.phone_info.tr(),
+                            ),
+                            filled: true,
+                            fillColor: context
+                                .general
+                                .colorScheme
+                                .surfaceContainerHighest
+                                .withValues(alpha: 0.3),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: context.general.colorScheme.primary,
+                                width: 2,
+                              ),
+                            ),
+                          ),
                         ),
                         const SizedBox(height: ProductPadding.medium),
                         _buildTextField(

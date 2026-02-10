@@ -54,5 +54,8 @@
   "days_left": "days left",
   "today": "Today!",
   "tomorrow": "Tomorrow!",
-  "search_no_results": "No results found"
+  "search_no_results": "No results found",
+  "send_wish": "Send wish",
+  "phone_number": "Phone Number",
+  "phone_info": "If you add a phone number, automatic redirection can be made within WhatsApp"
 }

@@ -20,6 +20,7 @@ class BirthdayModel extends Equatable {
   final DateTime createdAt;
   @ProductTimestampConverter()
   final DateTime? updatedAt;
+  final String? phoneNumber;
 
   const BirthdayModel({
     required this.id,
@@ -31,6 +32,7 @@ class BirthdayModel extends Equatable {
     required this.greetingMessage,
     required this.createdAt,
     this.updatedAt,
+    this.phoneNumber,
   });
 
   String get fullName => '$name $surname';
@@ -50,6 +52,7 @@ class BirthdayModel extends Equatable {
     String? greetingMessage,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? phoneNumber,
   }) {
     return BirthdayModel(
       id: id ?? this.id,
@@ -61,6 +64,7 @@ class BirthdayModel extends Equatable {
       greetingMessage: greetingMessage ?? this.greetingMessage,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
     );
   }
 
@@ -99,5 +103,6 @@ class BirthdayModel extends Equatable {
     greetingMessage,
     createdAt,
     updatedAt,
+    phoneNumber,
   ];
 }

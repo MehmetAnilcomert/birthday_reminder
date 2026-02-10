@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
 import 'package:birthday_reminder/product/service/notification/notification_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -98,9 +100,9 @@ final class FirebaseNotificationService implements INotificationService {
             priority: Priority.max,
             importance: Importance.max,
             actions: [
-              const AndroidNotificationAction(
+              AndroidNotificationAction(
                 'send_message',
-                'Mesaj Gönder',
+                LocaleKeys.send_wish.tr(),
                 showsUserInterface: true,
               ),
             ],
@@ -121,36 +123,30 @@ final class FirebaseNotificationService implements INotificationService {
     if (details.actionId == 'send_message' && details.payload != null) {
       try {
         final data = jsonDecode(details.payload!) as Map<String, dynamic>;
-        String? message;
 
-        // Try to get message from birthdays list (new backend structure)
-        if (data.containsKey('birthdays')) {
-          try {
-            final birthdays =
-                jsonDecode(data['birthdays'] as String) as List<dynamic>;
-            if (birthdays.isNotEmpty) {
-              final firstBirthday = birthdays.first as Map<String, dynamic>;
-              message = firstBirthday['greetingMessage'] as String?;
-            }
-          } catch (_) {
-            // failed to parse birthdays
+        // Extract message and phone number from the new single-birthday payload
+        final message = data['greetingMessage'] as String? ?? '';
+        final phoneNumber = data['phoneNumber'] as String? ?? '';
+
+        if (message.isNotEmpty) {
+          // Construct WhatsApp URL with or without phone number
+          final String whatsappUrl;
+          if (phoneNumber.isNotEmpty) {
+            // Direct to specific contact
+            whatsappUrl =
+                'https://wa.me/$phoneNumber?text=${Uri.encodeComponent(message)}';
+          } else {
+            // Let user choose contact
+            whatsappUrl = 'https://wa.me/?text=${Uri.encodeComponent(message)}';
           }
-        }
 
-        // Fallback to direct keys
-        message ??=
-            data['greetingMessage'] as String? ?? data['message'] as String?;
-
-        if (message != null && message.isNotEmpty) {
-          final uri = Uri.parse(
-            'https://wa.me/?text=${Uri.encodeComponent(message)}',
-          );
+          final uri = Uri.parse(whatsappUrl);
           if (await canLaunchUrl(uri)) {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
           }
         }
       } catch (e) {
-        // Handle error
+        // Handle error silently
       }
     }
   }

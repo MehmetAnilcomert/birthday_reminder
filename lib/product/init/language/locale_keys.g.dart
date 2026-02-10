@@ -59,5 +59,8 @@ abstract class  LocaleKeys {
   static const today = 'today';
   static const tomorrow = 'tomorrow';
   static const search_no_results = 'search_no_results';
+  static const send_wish = 'send_wish';
+  static const phone_number = 'phone_number';
+  static const phone_info = 'phone_info';
 
 }

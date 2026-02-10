@@ -54,5 +54,8 @@
   "days_left": "gün kaldı",
   "today": "Bugün!",
   "tomorrow": "Yarın!",
-  "search_no_results": "Sonuç bulunamadı"
+  "search_no_results": "Sonuç bulunamadı",
+  "send_wish": "Tebrik mesajı gönder",
+  "phone_number": "Telefon Numarası",
+  "phone_info": "Telefon numarası eklerseniz whatsapp içerisinde otomatik yönlendirme yapılabilir"
 }

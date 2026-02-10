@@ -12,21 +12,16 @@ BirthdayModel _$BirthdayModelFromJson(Map<String, dynamic> json) =>
       userId: json['userId'] as String,
       name: json['name'] as String,
       surname: json['surname'] as String,
-      birthdayDate: const ProductTimestampConverter().fromJson(
-        json['birthdayDate'] as Object,
-      ),
-      relationship: $enumDecode(
-        _$RelationshipTypeEnumMap,
-        json['relationship'],
-      ),
+      birthdayDate: const ProductTimestampConverter()
+          .fromJson(json['birthdayDate'] as Object),
+      relationship:
+          $enumDecode(_$RelationshipTypeEnumMap, json['relationship']),
       greetingMessage: json['greetingMessage'] as String,
-      createdAt: const ProductTimestampConverter().fromJson(
-        json['createdAt'] as Object,
-      ),
+      createdAt: const ProductTimestampConverter()
+          .fromJson(json['createdAt'] as Object),
       updatedAt: _$JsonConverterFromJson<Object, DateTime>(
-        json['updatedAt'],
-        const ProductTimestampConverter().fromJson,
-      ),
+          json['updatedAt'], const ProductTimestampConverter().fromJson),
+      phoneNumber: json['phoneNumber'] as String?,
     );
 
 Map<String, dynamic> _$BirthdayModelToJson(BirthdayModel instance) =>
@@ -35,19 +30,17 @@ Map<String, dynamic> _$BirthdayModelToJson(BirthdayModel instance) =>
       'userId': instance.userId,
       'name': instance.name,
       'surname': instance.surname,
-      'birthdayDate': const ProductTimestampConverter().toJson(
-        instance.birthdayDate,
-      ),
-      'relationship': _$RelationshipTypeEnumMap[instance.relationship],
+      'birthdayDate':
+          const ProductTimestampConverter().toJson(instance.birthdayDate),
+      'relationship': _$RelationshipTypeEnumMap[instance.relationship]!,
       'greetingMessage': instance.greetingMessage,
       'createdAt': const ProductTimestampConverter().toJson(instance.createdAt),
       'updatedAt': _$JsonConverterToJson<Object, DateTime>(
-        instance.updatedAt,
-        const ProductTimestampConverter().toJson,
-      ),
+          instance.updatedAt, const ProductTimestampConverter().toJson),
+      'phoneNumber': instance.phoneNumber,
     };
 
-const Map<RelationshipType, String> _$RelationshipTypeEnumMap = {
+const _$RelationshipTypeEnumMap = {
   RelationshipType.family: 'family',
   RelationshipType.friend: 'friend',
   RelationshipType.colleague: 'colleague',
@@ -57,9 +50,11 @@ const Map<RelationshipType, String> _$RelationshipTypeEnumMap = {
 Value? _$JsonConverterFromJson<Json, Value>(
   Object? json,
   Value? Function(Json json) fromJson,
-) => json == null ? null : fromJson(json as Json);
+) =>
+    json == null ? null : fromJson(json as Json);
 
 Json? _$JsonConverterToJson<Json, Value>(
   Value? value,
   Json? Function(Value value) toJson,
-) => value == null ? null : toJson(value);
+) =>
+    value == null ? null : toJson(value);
