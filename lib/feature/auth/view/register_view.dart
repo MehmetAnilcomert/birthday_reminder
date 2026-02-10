@@ -6,6 +6,7 @@ import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
 import 'package:birthday_reminder/feature/auth/view_model/auth_view_model.dart';
 import 'package:birthday_reminder/feature/auth/view_model/state/auth_state.dart';
 import 'package:birthday_reminder/product/state/base/base_state.dart';
+import 'package:birthday_reminder/product/utility/constants/enums/auth_status.dart';
 import 'package:birthday_reminder/product/utility/constants/product_padding.dart';
 import 'package:birthday_reminder/product/utility/mixin/error_translator.dart';
 import 'package:birthday_reminder/product/utility/validators.dart';
@@ -15,7 +16,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kartal/kartal.dart';
 
 @RoutePage()
+/// Register view.
 class RegisterView extends StatefulWidget {
+  /// Register view.
   const RegisterView({super.key});
 
   @override
@@ -42,9 +45,9 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
   }
 
   Future<void> _selectBirthday(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
-      initialDate: DateTime(2000, 1, 1),
+      initialDate: DateTime(2000),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       helpText: LocaleKeys.birthday.tr(),
@@ -66,9 +69,9 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
     }
   }
 
-  void _handleRegister() {
+  Future<void> _handleRegister() async {
     if (_formKey.currentState!.validate()) {
-      context.read<AuthViewModel>().signUp(
+      await context.read<AuthViewModel>().signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text,
         birthday: _selectedBirthday,
@@ -79,7 +82,7 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthViewModel, AuthState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state.status == AuthStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -89,7 +92,7 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
           );
         } else if (state.status == AuthStatus.authenticated) {
           // Navigate to Home
-          context.router.replace(const HomeRoute());
+          await context.router.replace(const HomeRoute());
         }
       },
       builder: (context, state) {

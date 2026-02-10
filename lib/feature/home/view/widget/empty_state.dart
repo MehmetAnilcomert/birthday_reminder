@@ -1,5 +1,4 @@
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
-import 'package:birthday_reminder/product/utility/constants/product_padding.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';

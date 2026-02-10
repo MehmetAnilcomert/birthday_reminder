@@ -14,10 +14,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kartal/kartal.dart';
 
 @RoutePage()
+/// Birthday form view widget for the application.
 class BirthdayFormView extends StatefulWidget {
-  final BirthdayModel? birthday;
-
+  /// Creates an instance of [BirthdayFormView].
   const BirthdayFormView({super.key, this.birthday});
+
+  /// Birthday model for the application.
+  final BirthdayModel? birthday;
 
   @override
   State<BirthdayFormView> createState() => _BirthdayFormViewState();
@@ -221,7 +224,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                                             .general
                                             .colorScheme
                                             .primary
-                                            .withOpacity(0.3),
+                                            .withValues(alpha: 0.3),
                                         blurRadius: 15,
                                         offset: const Offset(0, 5),
                                       ),
@@ -276,7 +279,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                                 .general
                                 .colorScheme
                                 .surfaceContainerHighest
-                                .withOpacity(0.3),
+                                .withValues(alpha: 0.3),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
@@ -294,9 +297,10 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                             ),
                           ),
                           validator: (value) {
-                            if (_selectedDate == null)
+                            if (_selectedDate == null) {
                               return LocaleKeys.please_select_birthday_date
                                   .tr();
+                            }
                             return null;
                           },
                         ),
@@ -304,7 +308,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
 
                         // Relationship Dropdown
                         DropdownButtonFormField<RelationshipType>(
-                          value: _selectedRelationship,
+                          initialValue: _selectedRelationship,
                           decoration: InputDecoration(
                             labelText: LocaleKeys.relationship.tr(),
                             prefixIcon: Icon(
@@ -316,7 +320,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                                 .general
                                 .colorScheme
                                 .surfaceContainerHighest
-                                .withOpacity(0.3),
+                                .withValues(alpha: 0.3),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
@@ -366,7 +370,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                                 ),
                                 elevation: 4,
                                 shadowColor: context.general.colorScheme.primary
-                                    .withOpacity(0.4),
+                                    .withValues(alpha: 0.4),
                               ),
                               child: state.status == BirthdayFormStatus.loading
                                   ? SizedBox(
@@ -437,7 +441,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
         prefixIcon: Icon(icon, color: context.general.colorScheme.primary),
         filled: true,
         fillColor: context.general.colorScheme.surfaceContainerHighest
-            .withOpacity(0.3),
+            .withValues(alpha: 0.3),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -467,12 +471,15 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
   }
 
   String _getRelationshipText(RelationshipType type) {
-    if (type == RelationshipType.family)
+    if (type == RelationshipType.family) {
       return LocaleKeys.relationship_family.tr();
-    if (type == RelationshipType.friend)
+    }
+    if (type == RelationshipType.friend) {
       return LocaleKeys.relationship_friend.tr();
-    if (type == RelationshipType.colleague)
+    }
+    if (type == RelationshipType.colleague) {
       return LocaleKeys.relationship_colleague.tr();
+    }
     return LocaleKeys.relationship_other.tr();
   }
 }

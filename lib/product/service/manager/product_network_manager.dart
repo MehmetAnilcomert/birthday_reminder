@@ -22,4 +22,3 @@ class ProductNetworkManager extends NetworkManager<EmptyModel> {
     );
   }
 }
-

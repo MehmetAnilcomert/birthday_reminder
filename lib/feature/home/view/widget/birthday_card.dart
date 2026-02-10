@@ -28,7 +28,7 @@ class BirthdayCard extends StatelessWidget {
         vertical: ProductPadding.small,
       ),
       elevation: 4,
-      shadowColor: context.general.colorScheme.shadow.withOpacity(0.1),
+      shadowColor: context.general.colorScheme.shadow.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: onEdit,
@@ -62,8 +62,8 @@ class BirthdayCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: context.general.colorScheme.primary.withOpacity(
-                        0.3,
+                      color: context.general.colorScheme.primary.withValues(
+                        alpha: 0.3,
                       ),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
@@ -187,12 +187,15 @@ class BirthdayCard extends StatelessWidget {
   }
 
   String _getRelationshipText(RelationshipType type) {
-    if (type == RelationshipType.family)
+    if (type == RelationshipType.family) {
       return LocaleKeys.relationship_family.tr();
-    if (type == RelationshipType.friend)
+    }
+    if (type == RelationshipType.friend) {
       return LocaleKeys.relationship_friend.tr();
-    if (type == RelationshipType.colleague)
+    }
+    if (type == RelationshipType.colleague) {
       return LocaleKeys.relationship_colleague.tr();
+    }
     return LocaleKeys.relationship_other.tr();
   }
 
@@ -228,7 +231,7 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, size: 18, color: color),

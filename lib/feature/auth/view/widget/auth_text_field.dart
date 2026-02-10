@@ -3,10 +3,10 @@ import 'package:kartal/kartal.dart';
 
 class AuthTextField extends StatelessWidget {
   const AuthTextField({
-    super.key,
     required this.controller,
     required this.labelText,
     required this.prefixIcon,
+    super.key,
     this.obscureText = false,
     this.suffixIcon,
     this.validator,
@@ -40,7 +40,7 @@ class AuthTextField extends StatelessWidget {
         prefixIcon: Icon(prefixIcon),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: context.general.colorScheme.surface.withOpacity(0.5),
+        fillColor: context.general.colorScheme.surface.withValues(alpha: 0.5),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -48,7 +48,7 @@ class AuthTextField extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: context.general.colorScheme.outline.withOpacity(0.2),
+            color: context.general.colorScheme.outline.withValues(alpha: 0.2),
           ),
         ),
         focusedBorder: OutlineInputBorder(

@@ -122,8 +122,10 @@ class BirthdayRepository {
       ProductPreferencesKeys.birthdays,
     );
     if (cached != null) {
-      final List<dynamic> birthdaysJson = jsonDecode(cached);
-      return birthdaysJson.map((json) => BirthdayModel.fromJson(json)).toList();
+      final List<dynamic> birthdaysJson = jsonDecode(cached) as List<dynamic>;
+      return birthdaysJson
+          .map((json) => BirthdayModel.fromJson(json as Map<String, dynamic>))
+          .toList();
     }
     return null;
   }

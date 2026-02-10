@@ -3,6 +3,7 @@ import 'package:birthday_reminder/product/service/notification/notification_serv
 import 'package:birthday_reminder/feature/auth/view_model/state/auth_state.dart';
 import 'package:birthday_reminder/product/repositories/auth_repository.dart';
 import 'package:birthday_reminder/product/state/base/base_cubit.dart';
+import 'package:birthday_reminder/product/utility/constants/enums/auth_status.dart';
 
 /// A ViewModel for managing authentication state.
 final class AuthViewModel extends BaseCubit<AuthState> {
@@ -24,13 +25,14 @@ final class AuthViewModel extends BaseCubit<AuthState> {
       // For now, mirroring old logic roughly.
       emit(state.copyWith(status: AuthStatus.authenticated, user: cachedUser));
       if (cachedUser != null) {
-        _updateToken(cachedUser.id);
+        await _updateToken(cachedUser.id);
       }
     } else {
       emit(state.copyWith(status: AuthStatus.unauthenticated));
     }
   }
 
+  /// Signs in a user with email and password.
   Future<void> signIn({required String email, required String password}) async {
     emit(state.copyWith(status: AuthStatus.loading));
 

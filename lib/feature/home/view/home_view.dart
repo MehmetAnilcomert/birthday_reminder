@@ -16,7 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
+/// Home view
 class HomeView extends StatefulWidget {
+  /// Home view
   const HomeView({super.key});
 
   @override
@@ -49,9 +51,11 @@ class _HomeViewState extends BaseState<HomeView> {
           return BlocListener<AuthViewModel, AuthState>(
             // Access global AuthViewModel
             bloc: ProductStateItems.authViewModel,
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state.user != null) {
-                context.read<HomeViewModel>().loadBirthdays(state.user!.id);
+                await context.read<HomeViewModel>().loadBirthdays(
+                  state.user!.id,
+                );
               }
             },
             child: Scaffold(
@@ -83,7 +87,9 @@ class _HomeViewState extends BaseState<HomeView> {
                   if (result == true) {
                     final user = ProductStateItems.authViewModel.state.user;
                     if (user != null && context.mounted) {
-                      context.read<HomeViewModel>().loadBirthdays(user.id);
+                      await context.read<HomeViewModel>().loadBirthdays(
+                        user.id,
+                      );
                     }
                   }
                 },
@@ -117,7 +123,7 @@ class _HomeViewState extends BaseState<HomeView> {
         ),
         boxShadow: [
           BoxShadow(
-            color: context.general.colorScheme.shadow.withOpacity(0.2),
+            color: context.general.colorScheme.shadow.withValues(alpha: 0.2),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -133,8 +139,8 @@ class _HomeViewState extends BaseState<HomeView> {
                 Text(
                   LocaleKeys.welcome.tr(), // Or "Hello,"
                   style: context.general.textTheme.titleMedium?.copyWith(
-                    color: context.general.colorScheme.onPrimary.withOpacity(
-                      0.8,
+                    color: context.general.colorScheme.onPrimary.withValues(
+                      alpha: 0.8,
                     ),
                   ),
                 ),
@@ -153,12 +159,14 @@ class _HomeViewState extends BaseState<HomeView> {
               Icons.logout_rounded,
               color: context.general.colorScheme.onPrimary,
             ),
-            onPressed: () {
-              ProductStateItems.authViewModel.signOut();
-              context.router.replaceAll([const LoginRoute()]);
+            onPressed: () async {
+              await ProductStateItems.authViewModel.signOut();
+              if (context.mounted) {
+                await context.router.replaceAll([const LoginRoute()]);
+              }
             },
             style: IconButton.styleFrom(
-              backgroundColor: Colors.white.withOpacity(0.1),
+              backgroundColor: Colors.white.withValues(alpha: 0.1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -176,7 +184,7 @@ class _HomeViewState extends BaseState<HomeView> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: context.general.colorScheme.shadow.withOpacity(0.1),
+            color: context.general.colorScheme.shadow.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -289,12 +297,14 @@ class _HomeViewState extends BaseState<HomeView> {
                     if (result == true) {
                       final user = ProductStateItems.authViewModel.state.user;
                       if (user != null && context.mounted) {
-                        context.read<HomeViewModel>().loadBirthdays(user.id);
+                        await context.read<HomeViewModel>().loadBirthdays(
+                          user.id,
+                        );
                       }
                     }
                   },
-                  onDelete: () {
-                    _showDeleteConfirmation(context, birthday.id);
+                  onDelete: () async {
+                    await _showDeleteConfirmation(context, birthday.id);
                   },
                 );
               },
@@ -305,8 +315,11 @@ class _HomeViewState extends BaseState<HomeView> {
     );
   }
 
-  void _showDeleteConfirmation(BuildContext context, String birthdayId) {
-    showDialog(
+  Future<void> _showDeleteConfirmation(
+    BuildContext context,
+    String birthdayId,
+  ) async {
+    await showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(LocaleKeys.delete_birthday.tr()),
@@ -318,9 +331,11 @@ class _HomeViewState extends BaseState<HomeView> {
             child: Text(LocaleKeys.no.tr()),
           ),
           ElevatedButton(
-            onPressed: () {
-              context.read<HomeViewModel>().deleteBirthday(birthdayId);
-              Navigator.of(dialogContext).pop();
+            onPressed: () async {
+              await context.read<HomeViewModel>().deleteBirthday(birthdayId);
+              if (context.mounted) {
+                Navigator.of(dialogContext).pop();
+              }
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(LocaleKeys.birthday_deleted.tr()),

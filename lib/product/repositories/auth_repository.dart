@@ -6,13 +6,18 @@ import 'package:birthday_reminder/product/state/container/product_state_items.da
 import 'package:birthday_reminder/product/cache/product_preferences.dart';
 import 'dart:convert';
 
+/// A repository for handling authentication operations.
 class AuthRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  /// Returns the current authenticated user.
   User? get currentUser => _firebaseAuth.currentUser;
+
+  /// Returns a stream of authentication state changes.
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
+  /// Signs up a new user with the given credentials.
   Future<Either<String, UserModel>> signUp({
     required String email,
     required String password,
@@ -97,7 +102,7 @@ class AuthRepository {
       ProductPreferencesKeys.user,
     );
     if (userJson != null) {
-      return UserModel.fromJson(jsonDecode(userJson));
+      return UserModel.fromJson(jsonDecode(userJson) as Map<String, dynamic>);
     }
     return null;
   }

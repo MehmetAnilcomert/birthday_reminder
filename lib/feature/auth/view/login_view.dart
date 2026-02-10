@@ -6,6 +6,7 @@ import 'package:birthday_reminder/feature/auth/view_model/auth_view_model.dart';
 import 'package:birthday_reminder/feature/auth/view_model/state/auth_state.dart';
 import 'package:birthday_reminder/product/navigation/app_router.gr.dart';
 import 'package:birthday_reminder/product/state/base/base_state.dart';
+import 'package:birthday_reminder/product/utility/constants/enums/auth_status.dart';
 import 'package:birthday_reminder/product/utility/constants/product_padding.dart';
 import 'package:birthday_reminder/product/utility/mixin/error_translator.dart';
 import 'package:birthday_reminder/product/utility/validators.dart';
@@ -15,7 +16,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kartal/kartal.dart';
 
 @RoutePage()
+/// Login view.
 class LoginView extends StatefulWidget {
+  /// Login view.
   const LoginView({super.key});
 
   @override

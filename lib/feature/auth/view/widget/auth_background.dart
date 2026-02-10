@@ -3,9 +3,12 @@ import 'package:birthday_reminder/product/utility/constants/product_padding.dart
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
 
+/// Authorization view background widget.
 class AuthBackground extends StatelessWidget {
-  const AuthBackground({super.key, required this.child});
+  /// Creates a new instance of [AuthBackground].
+  const AuthBackground({required this.child, super.key});
 
+  /// Child widget.
   final Widget child;
 
   @override
@@ -33,7 +36,7 @@ class AuthBackground extends StatelessWidget {
             left: -50,
             child: CircleAvatar(
               radius: 100,
-              backgroundColor: Colors.white.withOpacity(0.1),
+              backgroundColor: Colors.white.withValues(alpha: 0.1),
             ),
           ),
           Positioned(
@@ -41,7 +44,7 @@ class AuthBackground extends StatelessWidget {
             right: -50,
             child: CircleAvatar(
               radius: 100,
-              backgroundColor: Colors.white.withOpacity(0.1),
+              backgroundColor: Colors.white.withValues(alpha: 0.1),
             ),
           ),
 
@@ -56,17 +59,17 @@ class AuthBackground extends StatelessWidget {
                   child: Container(
                     padding: const ProductPadding.allNormal(),
                     decoration: BoxDecoration(
-                      color: context.general.colorScheme.surface.withOpacity(
-                        0.8,
+                      color: context.general.colorScheme.surface.withValues(
+                        alpha: 0.8,
                       ),
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         width: 1.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),

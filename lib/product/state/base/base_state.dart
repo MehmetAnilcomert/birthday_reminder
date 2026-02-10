@@ -11,4 +11,3 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
   /// Provides access to the [ProductViewModel] instance.
   ProductViewModel get productViewModel => ProductStateItems.productViewModel;
 }
-

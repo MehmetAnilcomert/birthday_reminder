@@ -125,10 +125,10 @@ final class HomeViewModel extends BaseCubit<HomeState> {
   }
 
   List<BirthdayModel> _sortBirthdaysByUpcoming(List<BirthdayModel> birthdays) {
-    final sorted = List<BirthdayModel>.from(birthdays);
-    sorted.sort(
-      (a, b) => a.daysUntilBirthday().compareTo(b.daysUntilBirthday()),
-    );
+    final sorted = List<BirthdayModel>.from(birthdays)
+      ..sort(
+        (a, b) => a.daysUntilBirthday().compareTo(b.daysUntilBirthday()),
+      );
     return sorted;
   }
 }

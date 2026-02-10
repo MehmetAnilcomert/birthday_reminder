@@ -1,9 +1,10 @@
 import 'package:birthday_reminder/product/models/user_model.dart';
+import 'package:birthday_reminder/product/utility/constants/enums/auth_status.dart';
 import 'package:equatable/equatable.dart';
 
-enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
-
+/// Authentication state.
 final class AuthState extends Equatable {
+  /// Creates an instance of [AuthState].
   const AuthState({
     this.status = AuthStatus.initial,
     this.user,
@@ -17,6 +18,7 @@ final class AuthState extends Equatable {
   @override
   List<Object?> get props => [status, user, errorMessage];
 
+  /// Creates a copy of the current state with the given values.
   AuthState copyWith({
     AuthStatus? status,
     UserModel? user,

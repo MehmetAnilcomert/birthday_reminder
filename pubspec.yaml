@@ -57,6 +57,8 @@ dependencies:
   # Json Serialization
   json_annotation: ^4.9.0
   
+  very_good_analysis: ^10.1.0
+  
   # modules
   common: 
     path: module/common

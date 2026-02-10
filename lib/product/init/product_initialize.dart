@@ -53,7 +53,7 @@ final class ProductInitialize {
 
     /// Global error handling
     /// Todo: Customize error handling as needed
-    FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.onError = (details) {
       Logger().e(details.exceptionAsString());
       // You can also log the error to an external service here.
     };

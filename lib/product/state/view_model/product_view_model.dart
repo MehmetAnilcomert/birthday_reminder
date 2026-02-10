@@ -12,4 +12,3 @@ final class ProductViewModel extends BaseCubit<ProductState> {
     emit(state.copyWith(themeMode: themeMode));
   }
 }
-

@@ -33,12 +33,12 @@ Future<void> initTests() async {
 Future<Box<E>> openTestBox<E>({String? name}) async {
   await initTests();
   name ??= Random().nextInt(999999).toString();
-  final box = Hive.box<E>(name: name);
-  box.verify();
+  final box = Hive.box<E>(name: name)..verify();
   addTearDown(() async {
     if (box.isOpen) {
-      box.verify();
-      box.deleteFromDisk();
+      box
+        ..verify()
+        ..deleteFromDisk();
     }
   });
 

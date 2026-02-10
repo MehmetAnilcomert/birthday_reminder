@@ -1,1 +1,10 @@
-include: package:flutter_lints/flutter.yaml
+include: package:very_good_analysis/analysis_options.yaml
+
+linter:
+  rules:
+    directives_ordering: false
+    lines_longer_than_80_chars: false
+    avoid_catches_without_on_clauses: false
+    discarded_futures: false
+    sort_pub_dependencies: false
+    public_member_api_docs: false

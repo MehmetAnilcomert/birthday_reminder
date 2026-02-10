@@ -18,4 +18,3 @@ class ProductState extends Equatable {
     return ProductState(themeMode: themeMode);
   }
 }
-

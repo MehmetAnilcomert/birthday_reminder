@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'app_router.gr.dart';
+import 'package:birthday_reminder/product/navigation/app_router.gr.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'View,Route')
 /// App router configuration class for the application.
