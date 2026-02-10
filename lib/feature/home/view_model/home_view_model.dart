@@ -12,10 +12,10 @@ final class HomeViewModel extends BaseCubit<HomeState> {
 
   late final BirthdayRepository _birthdayRepository;
 
-  Future<void> loadBirthdays(String userId) async {
+  Future<void> loadBirthdays(String userId, String userEmail) async {
     emit(state.copyWith(status: HomeStatus.loading));
 
-    final result = await _birthdayRepository.getBirthdays(userId);
+    final result = await _birthdayRepository.getBirthdays(userId, userEmail);
 
     result.fold(
       (error) =>
@@ -36,9 +36,9 @@ final class HomeViewModel extends BaseCubit<HomeState> {
     );
   }
 
-  Future<void> addBirthday(BirthdayModel birthday) async {
+  Future<void> addBirthday(BirthdayModel birthday, String userEmail) async {
     // Optimistic update or wait? Current impl waits.
-    final result = await _birthdayRepository.addBirthday(birthday);
+    final result = await _birthdayRepository.addBirthday(birthday, userEmail);
 
     result.fold(
       (error) =>
@@ -59,8 +59,11 @@ final class HomeViewModel extends BaseCubit<HomeState> {
     );
   }
 
-  Future<void> updateBirthday(BirthdayModel birthday) async {
-    final result = await _birthdayRepository.updateBirthday(birthday);
+  Future<void> updateBirthday(BirthdayModel birthday, String userEmail) async {
+    final result = await _birthdayRepository.updateBirthday(
+      birthday,
+      userEmail,
+    );
 
     result.fold(
       (error) =>

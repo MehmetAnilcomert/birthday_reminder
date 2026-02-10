@@ -12,10 +12,10 @@ final class BirthdayFormViewModel extends BaseCubit<BirthdayFormState> {
 
   late final BirthdayRepository _birthdayRepository;
 
-  Future<void> addBirthday(BirthdayModel birthday) async {
+  Future<void> addBirthday(BirthdayModel birthday, String userEmail) async {
     emit(state.copyWith(status: BirthdayFormStatus.loading));
 
-    final result = await _birthdayRepository.addBirthday(birthday);
+    final result = await _birthdayRepository.addBirthday(birthday, userEmail);
 
     result.fold(
       (error) => emit(
@@ -25,10 +25,13 @@ final class BirthdayFormViewModel extends BaseCubit<BirthdayFormState> {
     );
   }
 
-  Future<void> updateBirthday(BirthdayModel birthday) async {
+  Future<void> updateBirthday(BirthdayModel birthday, String userEmail) async {
     emit(state.copyWith(status: BirthdayFormStatus.loading));
 
-    final result = await _birthdayRepository.updateBirthday(birthday);
+    final result = await _birthdayRepository.updateBirthday(
+      birthday,
+      userEmail,
+    );
 
     result.fold(
       (error) => emit(

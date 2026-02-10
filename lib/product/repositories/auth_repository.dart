@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:birthday_reminder/product/models/user_model.dart';
+import 'package:birthday_reminder/product/services/encryption_service.dart';
 import 'package:birthday_reminder/product/state/container/product_state_items.dart';
 import 'package:birthday_reminder/product/cache/product_preferences.dart';
 import 'dart:convert';
@@ -10,6 +11,7 @@ import 'dart:convert';
 class AuthRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final EncryptionService _encryptionService = EncryptionService();
 
   /// Returns the current authenticated user.
   User? get currentUser => _firebaseAuth.currentUser;
@@ -93,6 +95,10 @@ class AuthRepository {
       }
 
       final user = UserModel.fromJson(userData);
+
+      // Initialize encryption key for this user
+      await _encryptionService.initializeUserKey(user.id, user.email);
+
       await ProductStateItems.productPreferences.setString(
         ProductPreferencesKeys.user,
         jsonEncode(user.toJson()),
@@ -116,6 +122,9 @@ class AuthRepository {
     } catch (e) {
       // Error removing FCM token
     }
+
+    // Clear encryption key
+    await _encryptionService.clearUserKey(userId);
 
     await _firebaseAuth.signOut();
     await ProductStateItems.productPreferences.clear();

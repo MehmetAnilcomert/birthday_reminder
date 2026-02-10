@@ -47,6 +47,11 @@ dependencies:
   # Date Handling
   jiffy: ^6.3.1
   
+  # Encryption & Security
+  encrypt: ^5.0.3
+  flutter_secure_storage: ^9.0.0
+  crypto: ^3.0.3
+  
   # Functional
   dartz: ^0.10.1
   
