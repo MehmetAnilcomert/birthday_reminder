@@ -38,5 +38,31 @@ final class Validators {
     }
     return null;
   }
-}
 
+  static String? birthdayValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'birthday_required';
+    }
+
+    // Try to parse the date
+    try {
+      final date = DateTime.parse(value);
+      final now = DateTime.now();
+
+      // Check if birthday is in the future
+      if (date.isAfter(now)) {
+        return 'birthday_future';
+      }
+
+      // Check if birthday is too old (more than 120 years ago)
+      final maxAge = DateTime(now.year - 120, now.month, now.day);
+      if (date.isBefore(maxAge)) {
+        return 'birthday_too_old';
+      }
+
+      return null;
+    } catch (e) {
+      return 'invalid_birthday';
+    }
+  }
+}

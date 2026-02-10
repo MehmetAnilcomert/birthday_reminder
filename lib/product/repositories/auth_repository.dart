@@ -16,6 +16,7 @@ class AuthRepository {
   Future<Either<String, UserModel>> signUp({
     required String email,
     required String password,
+    DateTime? birthday,
   }) async {
     try {
       final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
@@ -30,6 +31,7 @@ class AuthRepository {
       final user = UserModel(
         id: userCredential.user!.uid,
         email: email,
+        birthday: birthday,
         createdAt: DateTime.now(),
       );
 

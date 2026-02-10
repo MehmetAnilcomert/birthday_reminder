@@ -10,6 +10,11 @@ abstract class  LocaleKeys {
   static const email = 'email';
   static const password = 'password';
   static const confirm_password = 'confirm_password';
+  static const birthday = 'birthday';
+  static const birthday_required = 'birthday_required';
+  static const invalid_birthday = 'invalid_birthday';
+  static const birthday_future = 'birthday_future';
+  static const birthday_too_old = 'birthday_too_old';
   static const forgot_password = 'forgot_password';
   static const logout = 'logout';
   static const home = 'home';

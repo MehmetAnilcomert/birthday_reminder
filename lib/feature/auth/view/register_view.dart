@@ -23,6 +23,8 @@ class _RegisterViewState extends BaseState<RegisterView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _birthdayController = TextEditingController();
+  DateTime? _selectedBirthday;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
@@ -31,7 +33,25 @@ class _RegisterViewState extends BaseState<RegisterView> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _birthdayController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectBirthday(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(2000, 1, 1),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      helpText: LocaleKeys.birthday.tr(),
+    );
+    if (picked != null && picked != _selectedBirthday) {
+      setState(() {
+        _selectedBirthday = picked;
+        _birthdayController.text =
+            '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+      });
+    }
   }
 
   void _handleRegister() {
@@ -39,6 +59,7 @@ class _RegisterViewState extends BaseState<RegisterView> {
       context.read<AuthViewModel>().signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text,
+        birthday: _selectedBirthday,
       );
     }
   }
@@ -79,10 +100,11 @@ class _RegisterViewState extends BaseState<RegisterView> {
                       const SizedBox(height: 16),
                       Text(
                         LocaleKeys.register.tr(),
-                        style: context.general.textTheme.headlineLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: context.general.colorScheme.primary,
-                        ),
+                        style: context.general.textTheme.headlineLarge
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: context.general.colorScheme.primary,
+                            ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 48),
@@ -94,6 +116,21 @@ class _RegisterViewState extends BaseState<RegisterView> {
                           prefixIcon: const Icon(Icons.email),
                         ),
                         validator: Validators.emailValidator,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _birthdayController,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          labelText: LocaleKeys.birthday.tr(),
+                          prefixIcon: const Icon(Icons.cake),
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.calendar_today),
+                            onPressed: () => _selectBirthday(context),
+                          ),
+                        ),
+                        validator: Validators.birthdayValidator,
+                        onTap: () => _selectBirthday(context),
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
