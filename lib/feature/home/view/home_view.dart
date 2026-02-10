@@ -143,12 +143,11 @@ class _HomeViewState extends BaseState<HomeView> {
                   builder: (context, state) {
                     final userName = state.user?.name ?? '';
                     final userSurname = state.user?.surname ?? '';
-                    final fullName = '$userName $userSurname'.trim();
+                    final welcomeText =
+                        LocaleKeys.welcome.tr() + ", " + userName.trim();
 
                     return Text(
-                      fullName.isNotEmpty
-                          ? 'Hoş geldin, $fullName'
-                          : LocaleKeys.welcome.tr(),
+                      welcomeText,
                       style: context.general.textTheme.titleMedium?.copyWith(
                         color: context.general.colorScheme.onPrimary.withValues(
                           alpha: 0.8,
