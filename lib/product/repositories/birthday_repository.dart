@@ -1,26 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:birthday_reminder/product/models/birthday_model.dart';
+import 'package:birthday_reminder/product/services/encryption_service.dart';
 import 'package:birthday_reminder/product/state/container/product_state_items.dart';
 import 'package:birthday_reminder/product/cache/product_preferences.dart';
 import 'dart:convert';
 
 class BirthdayRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final EncryptionService _encryptionService = EncryptionService();
 
   Future<Either<String, List<BirthdayModel>>> getBirthdays(
     String userId,
+    String userEmail,
   ) async {
     try {
       final snapshot = await _firestore
           .collection('birthdays')
           .where('userId', isEqualTo: userId)
-          .orderBy('birthdayDate')
           .get();
 
-      final birthdays = snapshot.docs
-          .map((doc) => BirthdayModel.fromJson({...doc.data(), 'id': doc.id}))
-          .toList();
+      final birthdays = <BirthdayModel>[];
+      for (final doc in snapshot.docs) {
+        try {
+          final data = doc.data();
+          final birthday = await BirthdayModel.fromEncrypted(
+            {...data, 'id': doc.id},
+            _encryptionService,
+            userId,
+            userEmail,
+          );
+          birthdays.add(birthday);
+        } catch (e) {
+          // Skip documents that can't be decrypted
+          continue;
+        }
+      }
 
       // Cache the birthdays
       await _cacheBirthdays(birthdays);
@@ -38,18 +53,22 @@ class BirthdayRepository {
 
   Future<Either<String, BirthdayModel>> addBirthday(
     BirthdayModel birthday,
+    String userEmail,
   ) async {
     try {
+      // Encrypt the data before saving
+      final encryptedData = await birthday.toEncryptedJson(
+        _encryptionService,
+        birthday.userId,
+        userEmail,
+      );
+
       final docRef = await _firestore.collection('birthdays').add({
-        ...birthday.toJson(),
+        ...encryptedData,
         'createdAt': FieldValue.serverTimestamp(),
       });
 
-      final doc = await docRef.get();
-      final newBirthday = BirthdayModel.fromJson({
-        ...doc.data()!,
-        'id': doc.id,
-      });
+      final newBirthday = birthday.copyWith(id: docRef.id);
 
       // Update cache
       await _addBirthdayToCache(newBirthday);
@@ -62,10 +81,18 @@ class BirthdayRepository {
 
   Future<Either<String, BirthdayModel>> updateBirthday(
     BirthdayModel birthday,
+    String userEmail,
   ) async {
     try {
+      // Encrypt the data before updating
+      final encryptedData = await birthday.toEncryptedJson(
+        _encryptionService,
+        birthday.userId,
+        userEmail,
+      );
+
       await _firestore.collection('birthdays').doc(birthday.id).update({
-        ...birthday.toJson(),
+        ...encryptedData,
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
@@ -93,18 +120,34 @@ class BirthdayRepository {
     }
   }
 
-  Stream<List<BirthdayModel>> birthdaysStream(String userId) {
+  Stream<List<BirthdayModel>> birthdaysStream(
+    String userId,
+    String userEmail,
+  ) {
     return _firestore
         .collection('birthdays')
         .where('userId', isEqualTo: userId)
-        .orderBy('birthdayDate')
         .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
-              .map(
-                (doc) => BirthdayModel.fromJson({...doc.data(), 'id': doc.id}),
-              )
-              .toList(),
+        .asyncMap(
+          (snapshot) async {
+            final birthdays = <BirthdayModel>[];
+            for (final doc in snapshot.docs) {
+              try {
+                final data = doc.data();
+                final birthday = await BirthdayModel.fromEncrypted(
+                  {...data, 'id': doc.id},
+                  _encryptionService,
+                  userId,
+                  userEmail,
+                );
+                birthdays.add(birthday);
+              } catch (e) {
+                // Skip documents that can't be decrypted
+                continue;
+              }
+            }
+            return birthdays;
+          },
         );
   }
 

@@ -41,7 +41,7 @@ class _HomeViewState extends BaseState<HomeView> {
         final viewModel = HomeViewModel();
         final user = ProductStateItems.authViewModel.state.user;
         if (user != null) {
-          viewModel.loadBirthdays(user.id);
+          viewModel.loadBirthdays(user.id, user.email);
         }
         return viewModel;
       },
@@ -55,6 +55,7 @@ class _HomeViewState extends BaseState<HomeView> {
               if (state.user != null) {
                 await context.read<HomeViewModel>().loadBirthdays(
                   state.user!.id,
+                  state.user!.email,
                 );
               }
             },
@@ -89,6 +90,7 @@ class _HomeViewState extends BaseState<HomeView> {
                     if (user != null && context.mounted) {
                       await context.read<HomeViewModel>().loadBirthdays(
                         user.id,
+                        user.email,
                       );
                     }
                   }
@@ -275,7 +277,10 @@ class _HomeViewState extends BaseState<HomeView> {
             onRefresh: () async {
               final user = ProductStateItems.authViewModel.state.user;
               if (user != null) {
-                await context.read<HomeViewModel>().loadBirthdays(user.id);
+                await context.read<HomeViewModel>().loadBirthdays(
+                  user.id,
+                  user.email,
+                );
               }
             },
             child: ListView.builder(
@@ -299,6 +304,7 @@ class _HomeViewState extends BaseState<HomeView> {
                       if (user != null && context.mounted) {
                         await context.read<HomeViewModel>().loadBirthdays(
                           user.id,
+                          user.email,
                         );
                       }
                     }

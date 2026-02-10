@@ -72,7 +72,7 @@ class BirthdayCard extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    '${birthday.name[0]}${birthday.surname[0]}'.toUpperCase(),
+                    '${birthday.name![0]}${birthday.surname![0]}'.toUpperCase(),
                     style: context.general.textTheme.titleLarge?.copyWith(
                       color: context.general.colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,
@@ -109,7 +109,7 @@ class BirthdayCard extends StatelessWidget {
                           DateFormat(
                             'd MMM',
                             context.locale.toString(),
-                          ).format(birthday.birthdayDate),
+                          ).format(birthday.birthdayDate!),
                           style: context.general.textTheme.bodyMedium?.copyWith(
                             color: context.general.colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w500,
@@ -129,7 +129,7 @@ class BirthdayCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        _getRelationshipText(birthday.relationship),
+                        _getRelationshipText(birthday.relationship!),
                         style: context.general.textTheme.labelSmall?.copyWith(
                           color: context.general.colorScheme.onSurfaceVariant,
                         ),

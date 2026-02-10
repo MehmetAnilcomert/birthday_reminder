@@ -47,13 +47,14 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
   void initState() {
     super.initState();
     if (isEditing) {
-      _nameController.text = widget.birthday!.name;
-      _surnameController.text = widget.birthday!.surname;
+      _nameController.text = widget.birthday!.name ?? '';
+      _surnameController.text = widget.birthday!.surname ?? '';
       _phoneController.text = widget.birthday!.phoneNumber ?? '';
-      _greetingController.text = widget.birthday!.greetingMessage;
+      _greetingController.text = widget.birthday!.greetingMessage ?? '';
       _selectedDate = widget.birthday!.birthdayDate;
       // _updateDateController(); // Moved to didChangeDependencies
-      _selectedRelationship = widget.birthday!.relationship;
+      _selectedRelationship =
+          widget.birthday!.relationship ?? RelationshipType.friend;
     }
   }
 
@@ -141,9 +142,9 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
 
       final viewModel = context.read<BirthdayFormViewModel>();
       if (isEditing) {
-        viewModel.updateBirthday(birthday);
+        viewModel.updateBirthday(birthday, user.email);
       } else {
-        viewModel.addBirthday(birthday);
+        viewModel.addBirthday(birthday, user.email);
       }
     }
   }
