@@ -10,6 +10,7 @@ class ProjectSettingModel extends Equatable with CacheModel {
   @override
   final String id;
   final String? token;
+  final String? user;
   final String? themeMode;
   final bool? isTutorialShown;
   final String? lastBirthdayGreetingShownDate;
@@ -18,6 +19,7 @@ class ProjectSettingModel extends Equatable with CacheModel {
   const ProjectSettingModel({
     required this.id,
     this.token,
+    this.user,
     this.themeMode,
     this.isTutorialShown,
     this.lastBirthdayGreetingShownDate,
@@ -36,6 +38,7 @@ class ProjectSettingModel extends Equatable with CacheModel {
   ProjectSettingModel copyWith({
     String? id,
     String? token,
+    String? user,
     String? themeMode,
     bool? isTutorialShown,
     String? lastBirthdayGreetingShownDate,
@@ -43,6 +46,7 @@ class ProjectSettingModel extends Equatable with CacheModel {
     return ProjectSettingModel(
       id: id ?? this.id,
       token: token ?? this.token,
+      user: user ?? this.user,
       themeMode: themeMode ?? this.themeMode,
       isTutorialShown: isTutorialShown ?? this.isTutorialShown,
       lastBirthdayGreetingShownDate:
@@ -54,6 +58,7 @@ class ProjectSettingModel extends Equatable with CacheModel {
   List<Object?> get props => [
     id,
     token,
+    user,
     themeMode,
     isTutorialShown,
     lastBirthdayGreetingShownDate,

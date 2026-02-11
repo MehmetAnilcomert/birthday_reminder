@@ -10,6 +10,7 @@ ProjectSettingModel _$ProjectSettingModelFromJson(Map<String, dynamic> json) =>
     ProjectSettingModel(
       id: json['id'] as String,
       token: json['token'] as String?,
+      user: json['user'] as String?,
       themeMode: json['themeMode'] as String?,
       isTutorialShown: json['isTutorialShown'] as bool?,
       lastBirthdayGreetingShownDate:
@@ -21,6 +22,7 @@ Map<String, dynamic> _$ProjectSettingModelToJson(
     <String, dynamic>{
       'id': instance.id,
       'token': instance.token,
+      'user': instance.user,
       'themeMode': instance.themeMode,
       'isTutorialShown': instance.isTutorialShown,
       'lastBirthdayGreetingShownDate': instance.lastBirthdayGreetingShownDate,

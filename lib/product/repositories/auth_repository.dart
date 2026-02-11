@@ -134,6 +134,20 @@ class AuthRepository {
     await ProductStateItems.productPreferences.clear();
   }
 
+  /// Fetches a user profile from Firestore.
+  Future<Either<String, UserModel>> getUser(String userId) async {
+    try {
+      final doc = await _firestore.collection('users').doc(userId).get();
+      if (!doc.exists) {
+        return const Left('Kullanıcı bulunamadı');
+      }
+      final user = UserModel.fromJson(doc.data()!);
+      return Right(user);
+    } catch (e) {
+      return Left('Kullanıcı bilgileri alınamadı: $e');
+    }
+  }
+
   UserModel? getCachedUser() {
     final userJson = ProductStateItems.productPreferences.getString(
       ProductPreferencesKeys.user,

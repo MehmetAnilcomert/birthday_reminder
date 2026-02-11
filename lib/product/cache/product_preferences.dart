@@ -53,6 +53,8 @@ final class ProductPreferences {
     switch (key) {
       case ProductPreferencesKeys.token:
         newSettings = settings.copyWith(token: value);
+      case ProductPreferencesKeys.user:
+        newSettings = settings.copyWith(user: value);
       case ProductPreferencesKeys.themeMode:
         newSettings = settings.copyWith(themeMode: value);
       case ProductPreferencesKeys.lastBirthdayGreetingShownDate:
@@ -68,6 +70,7 @@ final class ProductPreferences {
     final settings = _getSettings();
     return switch (key) {
       ProductPreferencesKeys.token => settings.token,
+      ProductPreferencesKeys.user => settings.user,
       ProductPreferencesKeys.themeMode => settings.themeMode,
       ProductPreferencesKeys.lastBirthdayGreetingShownDate =>
         settings.lastBirthdayGreetingShownDate,
@@ -109,6 +112,8 @@ final class ProductPreferences {
     switch (key) {
       case ProductPreferencesKeys.token:
         newSettings = settings.copyWith(token: null);
+      case ProductPreferencesKeys.user:
+        newSettings = settings.copyWith(user: null);
       case ProductPreferencesKeys.themeMode:
         newSettings = settings.copyWith(themeMode: null);
       case ProductPreferencesKeys.isTutorialShown:
