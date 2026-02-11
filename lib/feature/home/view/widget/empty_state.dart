@@ -1,4 +1,5 @@
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
+import 'package:birthday_reminder/product/utility/constants/product_padding.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
@@ -10,7 +11,7 @@ class EmptyBirthdayState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const ProductPadding.allLarge(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -54,7 +55,7 @@ class EmptyBirthdayState extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: ProductPadding.medium),
 
             // Description
             Text(
@@ -64,7 +65,7 @@ class EmptyBirthdayState extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: ProductPadding.large),
 
             // Decorative elements
             Row(
@@ -75,13 +76,13 @@ class EmptyBirthdayState extends StatelessWidget {
                   Icons.celebration,
                   context.general.colorScheme.tertiary,
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: ProductPadding.medium),
                 _buildDecoIcon(
                   context,
                   Icons.card_giftcard,
                   context.general.colorScheme.secondary,
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: ProductPadding.medium),
                 _buildDecoIcon(
                   context,
                   Icons.emoji_emotions,
@@ -97,10 +98,11 @@ class EmptyBirthdayState extends StatelessWidget {
 
   Widget _buildDecoIcon(BuildContext context, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding:
+          const ProductPadding.allSmall(), // Changed from EdgeInsets.all(12)
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(ProductPadding.medium),
       ),
       child: Icon(icon, color: color, size: 24),
     );

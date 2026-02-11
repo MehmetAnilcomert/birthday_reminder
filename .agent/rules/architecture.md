@@ -137,3 +137,25 @@ To add a new storage engine (e.g., Isar, SQLite):
 ### D. Application Integration
 - Initialize project-specific cache settings in `lib/product/cache/product_cache.dart`.
 - The main entry point for the application's cache orchestration is `ProductCache`.
+
+## 8. Design System Management
+
+To ensure visual consistency and maintainability, the following rules for theme and spacing must be strictly followed.
+
+### A. Theme Management (Colors & Typography)
+The application uses a centralized theme system based on Material 3.
+- **Color Scheme**: All project colors are defined in `lib/product/init/theme/`.
+    - Usage: Always access colors via `context.general.colorScheme`.
+    - Examples: `context.general.colorScheme.primary`, `context.general.colorScheme.surfaceContainerHighest`.
+- **Typography**: Text styles are managed via `TextTheme`.
+    - Usage: Always access text styles via `context.general.textTheme`.
+    - Examples: `context.general.textTheme.headlineSmall`, `context.general.textTheme.bodyLarge`.
+- **Constraint**: Hardcoded `Color(0x...)` or `Colors.[name]` values in feature views are **STRICTLY FORBIDDEN**. If a new color is needed, add it to the `ColorScheme` definitions.
+
+### B. Spacing and Padding Management
+All layout spacing and padding must use the `ProductPadding` utility class located in `lib/product/utility/constants/product_padding.dart`.
+- **EdgeInsets**: Use the named constructors for padding/margin.
+    - Usage: `ProductPadding.allMedium()`, `ProductPadding.symmetricVerticalNormal()`.
+- **Double Values**: Use the static constants for `SizedBox` dimensions or custom calculations.
+    - Usage: `ProductPadding.medium`, `ProductPadding.normal`.
+- **Constraint**: Hardcoded numerical values (e.g., `padding: EdgeInsets.all(16)`) in feature views are **STRICTLY FORBIDDEN**. Always map to the nearest `ProductPadding` value.

@@ -32,7 +32,7 @@ class _BirthdayAvatar extends StatelessWidget {
                     color: context.general.colorScheme.primary.withValues(
                       alpha: 0.3,
                     ),
-                    blurRadius: 15,
+                    blurRadius: ProductPadding.medium,
                     offset: const Offset(0, 5),
                   ),
                 ],
@@ -83,22 +83,22 @@ class _BirthdayTextField extends StatelessWidget {
         fillColor: context.general.colorScheme.surfaceContainerHighest
             .withValues(alpha: 0.3),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(ProductPadding.medium),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(ProductPadding.medium),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(ProductPadding.medium),
           borderSide: BorderSide(
             color: context.general.colorScheme.primary,
             width: 2,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(ProductPadding.medium),
           borderSide: BorderSide(color: context.general.colorScheme.error),
         ),
       ),
