@@ -57,5 +57,15 @@
   "search_no_results": "Sonuç bulunamadı",
   "send_wish": "Tebrik mesajı gönder",
   "phone_number": "Telefon Numarası",
-  "phone_info": "Telefon numarası eklerseniz whatsapp içerisinde otomatik yönlendirme yapılabilir"
+  "phone_info": "Telefon numarası eklerseniz whatsapp içerisinde otomatik yönlendirme yapılabilir",
+  "tutorial_welcome_title": "Hoş Geldiniz! 🎈",
+  "tutorial_welcome_description": "Doğum günü kayıt ekranına hoş geldiniz. Size hızlıca özelliklerimizi tanıtalım.",
+  "tutorial_continue": "Devam et",
+  "tutorial_phone_title": "Telefon Numarası Bilgisi",
+  "tutorial_phone_description": "Buraya tıklayarak telefon numarasının nasıl kaydedilmesi gerektiği hakkında bilgi alabilirsiniz.",
+  "tutorial_ai_title": "Yapay Zeka Önerisi",
+  "tutorial_ai_description": "Bu butona tıkladığınızda yapay zeka sizin için harika bir doğum günü mesajı oluşturur!",
+  "tutorial_skip": "GEÇ",
+  "ok": "Tamam",
+  "ai_suggestion": "AI Önerisi"
 }

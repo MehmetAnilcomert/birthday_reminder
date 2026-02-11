@@ -57,5 +57,15 @@
   "search_no_results": "No results found",
   "send_wish": "Send wish",
   "phone_number": "Phone Number",
-  "phone_info": "If you add a phone number, automatic redirection can be made within WhatsApp"
+  "phone_info": "If you add a phone number, automatic redirection can be made within WhatsApp",
+  "tutorial_welcome_title": "Welcome! 🎈",
+  "tutorial_welcome_description": "Welcome to the birthday registration screen. Let's briefly introduce our features to you.",
+  "tutorial_continue": "Continue",
+  "tutorial_phone_title": "Phone Number Info",
+  "tutorial_phone_description": "Click here to get information on how the phone number should be recorded.",
+  "tutorial_ai_title": "AI Suggestion",
+  "tutorial_ai_description": "When you click this button, AI creates a wonderful birthday message for you!",
+  "tutorial_skip": "SKIP",
+  "ok": "OK",
+  "ai_suggestion": "AI Suggestion"
 }

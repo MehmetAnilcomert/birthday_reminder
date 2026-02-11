@@ -12,6 +12,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kartal/kartal.dart';
+import 'package:birthday_reminder/product/cache/product_preferences.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 @RoutePage()
 /// Birthday form view widget for the application.
@@ -39,6 +41,11 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
   DateTime? _selectedDate;
   RelationshipType _selectedRelationship = RelationshipType.friend;
 
+  final _phoneIconKey = GlobalKey();
+  final _aiButtonKey = GlobalKey();
+  late TutorialCoachMark _tutorialCoachMark;
+  final List<TargetFocus> _targets = [];
+
   bool get isEditing => widget.birthday != null;
 
   bool _isInitialized = false;
@@ -65,6 +72,135 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
       _updateDateController();
       _isInitialized = true;
     }
+
+    if (!_isInitialized && !isEditing) {
+      _isInitialized = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkAndShowTutorial();
+      });
+    }
+  }
+
+  void _checkAndShowTutorial() {
+    final isShown = ProductStateItems.productPreferences.getBool(
+      key: ProductPreferencesKeys.isTutorialShown,
+    );
+    if (!isShown) {
+      _showInitialPopup();
+    }
+  }
+
+  void _showInitialPopup() {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(LocaleKeys.tutorial_welcome_title.tr()),
+        content: Text(
+          LocaleKeys.tutorial_welcome_description.tr(),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _initTutorial();
+              _tutorialCoachMark.show(context: context);
+            },
+            child: Text(LocaleKeys.tutorial_continue.tr()),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _initTutorial() {
+    _targets.clear();
+    _targets.add(
+      TargetFocus(
+        identify: 'phoneIcon',
+        keyTarget: _phoneIconKey,
+        alignSkip: Alignment.topRight,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            builder: (context, controller) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    LocaleKeys.tutorial_phone_title.tr(),
+                    style: context.general.textTheme.titleLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    LocaleKeys.tutorial_phone_description.tr(),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+
+    _targets.add(
+      TargetFocus(
+        identify: 'aiButton',
+        keyTarget: _aiButtonKey,
+        alignSkip: Alignment.topRight,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    LocaleKeys.tutorial_ai_title.tr(),
+                    style: context.general.textTheme.titleLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    LocaleKeys.tutorial_ai_description.tr(),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+
+    _tutorialCoachMark = TutorialCoachMark(
+      targets: _targets,
+      colorShadow: context.general.colorScheme.primary,
+      textSkip: LocaleKeys.tutorial_skip.tr(),
+      paddingFocus: 10,
+      opacityShadow: 0.8,
+      onFinish: () {
+        ProductStateItems.productPreferences.setBool(
+          key: ProductPreferencesKeys.isTutorialShown,
+          value: true,
+        );
+      },
+      onSkip: () {
+        ProductStateItems.productPreferences.setBool(
+          key: ProductPreferencesKeys.isTutorialShown,
+          value: true,
+        );
+        return true;
+      },
+    );
   }
 
   void _updateDateController() {
@@ -365,6 +501,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                               color: context.general.colorScheme.primary,
                             ),
                             suffixIcon: IconButton(
+                              key: _phoneIconKey,
                               icon: Icon(
                                 Icons.info_outline,
                                 color: context.general.colorScheme.primary,
@@ -379,7 +516,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                                       TextButton(
                                         onPressed: () =>
                                             Navigator.pop(dialogContext),
-                                        child: const Text('OK'),
+                                        child: Text(LocaleKeys.ok.tr()),
                                       ),
                                     ],
                                   ),
@@ -432,6 +569,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                                       ),
                                     )
                                   : IconButton(
+                                      key: _aiButtonKey,
                                       onPressed: () {
                                         if (_nameController.text.isEmpty) {
                                           ScaffoldMessenger.of(
@@ -469,7 +607,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                                         color:
                                             context.general.colorScheme.primary,
                                       ),
-                                      tooltip: 'AI Önerisi',
+                                      tooltip: LocaleKeys.ai_suggestion.tr(),
                                     ),
                             );
                           },

@@ -12,7 +12,8 @@ enum ProductPreferencesKeys {
   birthdays,
 
   /// App theme mode
-  themeMode,
+  /// Whether the tutorial has been shown
+  isTutorialShown,
 }
 
 /// A class responsible for managing product preferences using SharedPreferences.
@@ -35,6 +36,19 @@ final class ProductPreferences {
   /// Retrieves a [String] value for the given [key].
   String? getString(ProductPreferencesKeys key) {
     return _preferences.getString(key.name);
+  }
+
+  /// Saves a [bool] value for the given [key].
+  Future<bool> setBool({
+    required ProductPreferencesKeys key,
+    required bool value,
+  }) async {
+    return _preferences.setBool(key.name, value);
+  }
+
+  /// Retrieves a [bool] value for the given [key].
+  bool getBool({required ProductPreferencesKeys key}) {
+    return _preferences.getBool(key.name) ?? false;
   }
 
   /// Removes the value for the given [key].
