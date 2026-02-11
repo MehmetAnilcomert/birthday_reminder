@@ -1,11 +1,12 @@
 import 'package:birthday_reminder/product/utility/json_converters/product_timestamp_converter.dart';
+import 'package:core/core.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user_model.g.dart';
 
 @JsonSerializable()
-class UserModel extends Equatable {
+class UserModel extends Equatable with CacheModel {
   final String id;
   final String email;
   final String? name;
@@ -31,6 +32,11 @@ class UserModel extends Equatable {
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
 
+  @override
+  UserModel fromDynamicJson(dynamic json) =>
+      UserModel.fromJson(json as Map<String, dynamic>);
+
+  @override
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 
   UserModel copyWith({

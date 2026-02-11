@@ -1,5 +1,6 @@
 import 'package:birthday_reminder/product/utility/json_converters/product_timestamp_converter.dart';
 import 'package:birthday_reminder/product/services/encryption_service.dart';
+import 'package:core/core.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -8,7 +9,7 @@ part 'birthday_model.g.dart';
 enum RelationshipType { family, friend, colleague, other }
 
 @JsonSerializable()
-class BirthdayModel extends Equatable {
+class BirthdayModel extends Equatable with CacheModel {
   final String id;
   final String userId;
 
@@ -60,6 +61,11 @@ class BirthdayModel extends Equatable {
   factory BirthdayModel.fromJson(Map<String, dynamic> json) =>
       _$BirthdayModelFromJson(json);
 
+  @override
+  BirthdayModel fromDynamicJson(dynamic json) =>
+      BirthdayModel.fromJson(json as Map<String, dynamic>);
+
+  @override
   Map<String, dynamic> toJson() => _$BirthdayModelToJson(this);
 
   /// Creates a BirthdayModel from encrypted Firestore data

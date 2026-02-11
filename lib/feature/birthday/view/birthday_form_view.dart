@@ -507,7 +507,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                                 color: context.general.colorScheme.primary,
                               ),
                               onPressed: () {
-                                showDialog(
+                                showDialog<void>(
                                   context: context,
                                   builder: (dialogContext) => AlertDialog(
                                     title: Text(LocaleKeys.phone_number.tr()),

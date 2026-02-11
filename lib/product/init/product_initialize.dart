@@ -5,6 +5,7 @@ import 'package:birthday_reminder/product/service/firebase_options.dart';
 import 'package:birthday_reminder/product/state/container/product_state_container.dart';
 import 'package:birthday_reminder/product/state/container/product_state_items.dart';
 import 'package:birthday_reminder/product/service/notification/notification_service.dart';
+import 'package:core/core.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_logger/easy_logger.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -44,6 +45,10 @@ final class ProductInitialize {
 
     /// Initialize Getit
     ProductContainer.setUp();
+
+    // Initialize cache manager
+    final cacheManager = ProductContainer.read<SharedPrefCacheManager>();
+    await cacheManager.init(items: <CacheModel>[]);
 
     // Initialize preferences
     await ProductStateItems.productPreferences.init();
