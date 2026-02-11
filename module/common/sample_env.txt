@@ -1,0 +1,31 @@
+This is a sample environment file. You can copy this file to .env and replace the sample values with your own values under the assets/env folder.
+
+# Environment variables
+
+BASE_URL = sample_url
+API_KEY = sample_api_key
+
+# Firebase Configuration - Web
+FIREBASE_WEB_API_KEY=
+FIREBASE_WEB_APP_ID=
+FIREBASE_MESSAGING_SENDER_ID=
+FIREBASE_PROJECT_ID=
+FIREBASE_AUTH_DOMAIN=
+FIREBASE_STORAGE_BUCKET=
+
+# Firebase Configuration - Android
+FIREBASE_ANDROID_API_KEY=
+FIREBASE_ANDROID_APP_ID=
+
+# Firebase Configuration - iOS
+FIREBASE_IOS_API_KEY=
+FIREBASE_IOS_APP_ID=
+FIREBASE_IOS_BUNDLE_ID=
+
+# Firebase Configuration - macOS (same as iOS)
+FIREBASE_MACOS_API_KEY=
+FIREBASE_MACOS_APP_ID=
+
+# Firebase Configuration - Windows
+FIREBASE_WINDOWS_API_KEY=
+FIREBASE_WINDOWS_APP_ID=
