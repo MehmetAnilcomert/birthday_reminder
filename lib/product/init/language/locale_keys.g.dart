@@ -72,5 +72,7 @@ abstract class  LocaleKeys {
   static const tutorial_skip = 'tutorial_skip';
   static const ok = 'ok';
   static const ai_suggestion = 'ai_suggestion';
+  static const happy_birthday_title = 'happy_birthday_title';
+  static const happy_birthday_message = 'happy_birthday_message';
 
 }

@@ -11,9 +11,14 @@ enum ProductPreferencesKeys {
   /// User's birthdays list
   birthdays,
 
-  /// App theme mode
+  /// APP theme mode
+  themeMode,
+
   /// Whether the tutorial has been shown
   isTutorialShown,
+
+  /// Last date the user's birthday greeting was shown
+  lastBirthdayGreetingShownDate,
 }
 
 /// A class responsible for managing product preferences using SharedPreferences.

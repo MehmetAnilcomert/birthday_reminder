@@ -11,6 +11,7 @@ import 'package:birthday_reminder/product/state/container/product_state_items.da
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
 import 'package:birthday_reminder/product/utility/constants/product_padding.dart';
 import 'package:kartal/kartal.dart';
+import 'package:birthday_reminder/product/cache/product_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,6 +28,18 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends BaseState<HomeView> {
   final _searchController = TextEditingController();
+  bool _isBirthdayChecked = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isBirthdayChecked) {
+      _isBirthdayChecked = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkUserBirthday();
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -368,6 +381,73 @@ class _HomeViewState extends BaseState<HomeView> {
               ),
             ),
             child: Text(LocaleKeys.yes.tr()),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _checkUserBirthday() {
+    final user = ProductStateItems.authViewModel.state.user;
+    if (user?.birthday == null) return;
+
+    final now = DateTime.now();
+    final isTodayBirthday =
+        user!.birthday!.day == now.day && user.birthday!.month == now.month;
+
+    if (isTodayBirthday) {
+      final todayStr = DateFormat('yyyy-MM-dd').format(now);
+      final lastShown = ProductStateItems.productPreferences.getString(
+        ProductPreferencesKeys.lastBirthdayGreetingShownDate,
+      );
+
+      if (lastShown != todayStr) {
+        ProductStateItems.productPreferences.setString(
+          ProductPreferencesKeys.lastBirthdayGreetingShownDate,
+          todayStr,
+        );
+        _showBirthdayGreeting();
+      }
+    }
+  }
+
+  void _showBirthdayGreeting() {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Column(
+          children: [
+            const Icon(Icons.cake, size: 64, color: Colors.amber),
+            const SizedBox(height: 16),
+            Text(
+              LocaleKeys.happy_birthday_title.tr(),
+              textAlign: TextAlign.center,
+              style: context.general.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          LocaleKeys.happy_birthday_message.tr(),
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          Center(
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(LocaleKeys.ok.tr()),
+            ),
           ),
         ],
       ),
