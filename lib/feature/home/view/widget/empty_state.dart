@@ -4,107 +4,39 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
 
+part '../../../../product/widget/empty_state/description.dart';
+part '../../../../product/widget/empty_state/title.dart';
+part '../../../../product/widget/empty_state/decorative_elements.dart';
+part '../../../../product/widget/empty_state/illustration.dart';
+
 class EmptyBirthdayState extends StatelessWidget {
   const EmptyBirthdayState({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Padding(
-        padding: const ProductPadding.allLarge(),
+        padding: ProductPadding.allLarge(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Illustration
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: context.general.colorScheme.primaryContainer
-                        .withValues(alpha: 0.3),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: context.general.colorScheme.secondaryContainer
-                        .withValues(alpha: 0.4),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.cake_outlined,
-                    size: 80,
-                    color: context.general.colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
+            // Illustration (Circle inner and outer circle with cake icon)
+            _Illustration(),
+            SizedBox(height: ProductPadding.medium),
 
             // Title
-            Text(
-              LocaleKeys.no_birthdays.tr(),
-              style: context.general.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: context.general.colorScheme.onSurface,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: ProductPadding.medium),
+            _Title(),
+            SizedBox(height: ProductPadding.medium),
 
             // Description
-            Text(
-              LocaleKeys.no_birthdays_description.tr(),
-              style: context.general.textTheme.bodyMedium?.copyWith(
-                color: context.general.colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: ProductPadding.large),
+            _Description(),
+            SizedBox(height: ProductPadding.large),
 
-            // Decorative elements
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildDecoIcon(
-                  context,
-                  Icons.celebration,
-                  context.general.colorScheme.tertiary,
-                ),
-                const SizedBox(width: ProductPadding.medium),
-                _buildDecoIcon(
-                  context,
-                  Icons.card_giftcard,
-                  context.general.colorScheme.secondary,
-                ),
-                const SizedBox(width: ProductPadding.medium),
-                _buildDecoIcon(
-                  context,
-                  Icons.emoji_emotions,
-                  context.general.colorScheme.primaryContainer,
-                ),
-              ],
-            ),
+            // Decorative elements (Icons)
+            _DecorativeElements(),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildDecoIcon(BuildContext context, IconData icon, Color color) {
-    return Container(
-      padding:
-          const ProductPadding.allSmall(), // Changed from EdgeInsets.all(12)
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(ProductPadding.medium),
-      ),
-      child: Icon(icon, color: color, size: 24),
     );
   }
 }

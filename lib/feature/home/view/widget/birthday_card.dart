@@ -5,6 +5,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
 
+part '../../../../product/widget/birthday_card/action_button.dart';
+part '../../../../product/widget/birthday_card/info_section.dart';
+part '../../../../product/widget/birthday_card/days_left_badge.dart';
+part '../../../../product/widget/birthday_card/gradient_avatar.dart';
+
 class BirthdayCard extends StatelessWidget {
   const BirthdayCard({
     required this.birthday,
@@ -27,7 +32,7 @@ class BirthdayCard extends StatelessWidget {
         horizontal: ProductPadding.medium,
         vertical: ProductPadding.small,
       ),
-      elevation: 4,
+      elevation: ProductPadding.micro,
       shadowColor: context.general.colorScheme.shadow.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(ProductPadding.medium),
@@ -37,134 +42,25 @@ class BirthdayCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(ProductPadding.medium),
         child: Container(
           padding: const ProductPadding.allMedium(),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(ProductPadding.medium),
-            border: isBirthdayToday
-                ? Border.all(
-                    color: context.general.colorScheme.primary,
-                    width: 2,
-                  )
-                : null,
-          ),
+          decoration: _buildDecoration(context, isBirthdayToday),
           child: Row(
             children: [
               // Avatar with Gradient
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      context.general.colorScheme.primaryContainer,
-                      context.general.colorScheme.primary,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: context.general.colorScheme.primary.withValues(
-                        alpha: 0.3,
-                      ),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    '${birthday.name![0]}${birthday.surname![0]}'.toUpperCase(),
-                    style: context.general.textTheme.titleLarge?.copyWith(
-                      color: context.general.colorScheme.onPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
+              _AvatarWithGradient(birthday: birthday),
+
               const SizedBox(width: ProductPadding.medium),
 
               // Info Section
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      birthday.fullName,
-                      style: context.general.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: context.general.colorScheme.onSurface,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: ProductPadding.micro),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.cake,
-                          size: 14,
-                          color: context.general.colorScheme.secondary,
-                        ),
-                        const SizedBox(width: ProductPadding.micro),
-                        Text(
-                          DateFormat(
-                            'd MMM',
-                            context.locale.toString(),
-                          ).format(birthday.birthdayDate!),
-                          style: context.general.textTheme.bodyMedium?.copyWith(
-                            color: context.general.colorScheme.onSurfaceVariant,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: ProductPadding.micro),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: ProductPadding.small,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color:
-                            context.general.colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(
-                          ProductPadding.small,
-                        ),
-                      ),
-                      child: Text(
-                        _getRelationshipText(birthday.relationship!),
-                        style: context.general.textTheme.labelSmall?.copyWith(
-                          color: context.general.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                child: _InfoSection(birthday: birthday),
               ),
 
               // Days Left & Actions
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _getDaysLeftColor(context, daysLeft),
-                      borderRadius: BorderRadius.circular(
-                        ProductPadding.medium,
-                      ),
-                    ),
-                    child: Text(
-                      _getDaysLeftText(daysLeft),
-                      style: context.general.textTheme.labelMedium?.copyWith(
-                        color: context.general.colorScheme.onPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  _DaysLeftBadge(
+                    daysLeft: daysLeft,
                   ),
                   const SizedBox(height: ProductPadding.small),
                   Row(
@@ -192,58 +88,16 @@ class BirthdayCard extends StatelessWidget {
     );
   }
 
-  String _getRelationshipText(RelationshipType type) {
-    if (type == RelationshipType.family) {
-      return LocaleKeys.relationship_family.tr();
-    }
-    if (type == RelationshipType.friend) {
-      return LocaleKeys.relationship_friend.tr();
-    }
-    if (type == RelationshipType.colleague) {
-      return LocaleKeys.relationship_colleague.tr();
-    }
-    return LocaleKeys.relationship_other.tr();
-  }
-
-  Color _getDaysLeftColor(BuildContext context, int days) {
-    if (days == 0) return context.general.colorScheme.primary;
-    if (days <= 7) return context.general.colorScheme.tertiary;
-    return context.general.colorScheme.outline;
-  }
-
-  String _getDaysLeftText(int days) {
-    if (days == 0) return LocaleKeys.today.tr();
-    if (days == 1) return LocaleKeys.tomorrow.tr();
-    return '$days ${LocaleKeys.days_left.tr()}';
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(ProductPadding.small),
-      child: Container(
-        padding: const EdgeInsets.all(
-          6,
-        ), // Maintain 6 for action button padding
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(ProductPadding.small),
-        ),
-        child: Icon(icon, size: 18, color: color),
-      ),
+  // BoxDecoration settings for birthday card
+  BoxDecoration _buildDecoration(BuildContext context, bool isBirthdayToday) {
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(ProductPadding.medium),
+      border: isBirthdayToday
+          ? Border.all(
+              color: context.general.colorScheme.primary,
+              width: 2,
+            )
+          : null,
     );
   }
 }

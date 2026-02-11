@@ -226,7 +226,7 @@ mixin BirthdayFormViewMixin on BaseState<BirthdayFormView>, ErrorTranslator {
     }
   }
 
-  void handleSave() {
+  void handleSave(BuildContext context) {
     if (formKey.currentState!.validate()) {
       if (selectedDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
