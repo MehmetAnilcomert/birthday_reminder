@@ -2,6 +2,7 @@ import 'package:birthday_reminder/product/service/manager/product_network_manage
 import 'package:birthday_reminder/product/state/view_model/product_view_model.dart';
 import 'package:birthday_reminder/feature/auth/view_model/auth_view_model.dart';
 import 'package:birthday_reminder/product/cache/product_preferences.dart';
+import 'package:core/core.dart';
 import 'package:birthday_reminder/product/service/notification/firebase_notification_service.dart';
 import 'package:birthday_reminder/product/service/notification/notification_service.dart';
 import 'package:get_it/get_it.dart';
@@ -16,9 +17,11 @@ final class ProductContainer {
 
   /// Sets up the necessary dependencies for the product state container.
   static void setUp() {
+    final sharedPrefCacheManager = SharedPrefCacheManager();
     _getit
       ..registerSingleton(ProductNetworkManager.base())
-      ..registerSingleton(ProductPreferences())
+      ..registerSingleton(sharedPrefCacheManager)
+      ..registerSingleton(ProductPreferences(sharedPrefCacheManager))
       ..registerLazySingleton(ProductViewModel.new)
       ..registerLazySingleton(AuthViewModel.new)
       ..registerSingleton<INotificationService>(FirebaseNotificationService());

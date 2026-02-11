@@ -348,7 +348,7 @@ class _HomeViewState extends BaseState<HomeView> {
     BuildContext context,
     String birthdayId,
   ) async {
-    await showDialog(
+    await showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(LocaleKeys.delete_birthday.tr()),
