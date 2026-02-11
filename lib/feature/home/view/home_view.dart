@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:birthday_reminder/feature/auth/view_model/auth_view_model.dart';
 import 'package:birthday_reminder/feature/auth/view_model/state/auth_state.dart';
+import 'package:birthday_reminder/feature/home/view/mixin/home_view_mixin.dart';
 import 'package:birthday_reminder/feature/home/view/widget/birthday_card.dart';
 import 'package:birthday_reminder/feature/home/view/widget/empty_state.dart';
 import 'package:birthday_reminder/feature/home/view_model/home_view_model.dart';
@@ -11,10 +12,11 @@ import 'package:birthday_reminder/product/state/container/product_state_items.da
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
 import 'package:birthday_reminder/product/utility/constants/product_padding.dart';
 import 'package:kartal/kartal.dart';
-import 'package:birthday_reminder/product/cache/product_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+part 'widget/home_view_widgets.dart';
 
 @RoutePage()
 /// Home view
@@ -26,27 +28,7 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends BaseState<HomeView> {
-  final _searchController = TextEditingController();
-  bool _isBirthdayChecked = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_isBirthdayChecked) {
-      _isBirthdayChecked = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _checkUserBirthday();
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
+class _HomeViewState extends BaseState<HomeView> with HomeViewMixin {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -60,9 +42,7 @@ class _HomeViewState extends BaseState<HomeView> {
       },
       child: Builder(
         builder: (context) {
-          // Listen to Auth state changes to reload if user changes (or handle logout)
           return BlocListener<AuthViewModel, AuthState>(
-            // Access global AuthViewModel
             bloc: ProductStateItems.authViewModel,
             listener: (context, state) async {
               if (state.user != null) {
@@ -75,23 +55,18 @@ class _HomeViewState extends BaseState<HomeView> {
             child: Scaffold(
               body: Stack(
                 children: [
-                  // Background color
                   Container(color: context.general.colorScheme.surface),
-
-                  // Content
                   Column(
                     children: [
-                      _buildHeader(context),
+                      const _HomeHeader(),
                       Expanded(child: _buildBody(context)),
                     ],
                   ),
-
-                  // Search Bar Positioned
                   Positioned(
                     top: 140,
                     left: 16,
                     right: 16,
-                    child: _buildSearchBar(context),
+                    child: _HomeSearchBar(controller: searchController),
                   ),
                 ],
               ),
@@ -119,129 +94,9 @@ class _HomeViewState extends BaseState<HomeView> {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      height: 180,
-      padding: const EdgeInsets.fromLTRB(24, 60, 24, 40),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            context.general.colorScheme.primary,
-            context.general.colorScheme.primaryContainer,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(32),
-          bottomRight: Radius.circular(32),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: context.general.colorScheme.shadow.withValues(alpha: 0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                BlocBuilder<AuthViewModel, AuthState>(
-                  bloc: ProductStateItems.authViewModel,
-                  builder: (context, state) {
-                    final userName = state.user?.name ?? '';
-                    final userSurname = state.user?.surname ?? '';
-                    final welcomeText =
-                        LocaleKeys.welcome.tr() + ", " + userName.trim();
-
-                    return Text(
-                      welcomeText,
-                      style: context.general.textTheme.titleMedium?.copyWith(
-                        color: context.general.colorScheme.onPrimary.withValues(
-                          alpha: 0.8,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                Text(
-                  LocaleKeys.app_name.tr(),
-                  style: context.general.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: context.general.colorScheme.onPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.logout_rounded,
-              color: context.general.colorScheme.onPrimary,
-            ),
-            onPressed: () async {
-              await ProductStateItems.authViewModel.signOut();
-              if (context.mounted) {
-                await context.router.replaceAll([const LoginRoute()]);
-              }
-            },
-            style: IconButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.1),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSearchBar(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: context.general.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: context.general.colorScheme.shadow.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: TextField(
-        controller: _searchController,
-        decoration: InputDecoration(
-          hintText: LocaleKeys.search.tr(),
-          hintStyle: TextStyle(
-            color: context.general.colorScheme.onSurfaceVariant,
-          ),
-          prefixIcon: Icon(
-            Icons.search,
-            color: context.general.colorScheme.primary,
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: ProductPadding.large,
-            vertical: ProductPadding.medium,
-          ),
-        ),
-        onChanged: (query) {
-          context.read<HomeViewModel>().updateSearchQuery(query);
-        },
-      ),
-    );
-  }
-
   Widget _buildBody(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20), // Space for SearchBar
+      padding: const EdgeInsets.only(top: 20),
       child: BlocBuilder<HomeViewModel, HomeState>(
         builder: (context, state) {
           if (state.status == HomeStatus.loading) {
@@ -307,12 +162,7 @@ class _HomeViewState extends BaseState<HomeView> {
               }
             },
             child: ListView.builder(
-              padding: const EdgeInsets.fromLTRB(
-                0,
-                8,
-                0,
-                80,
-              ), // Bottom padding for FAB
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 80),
               itemCount: state.filteredBirthdays.length,
               itemBuilder: (context, index) {
                 final birthday = state.filteredBirthdays[index];
@@ -333,123 +183,13 @@ class _HomeViewState extends BaseState<HomeView> {
                     }
                   },
                   onDelete: () async {
-                    await _showDeleteConfirmation(context, birthday.id);
+                    await showDeleteConfirmation(context, birthday.id);
                   },
                 );
               },
             ),
           );
         },
-      ),
-    );
-  }
-
-  Future<void> _showDeleteConfirmation(
-    BuildContext context,
-    String birthdayId,
-  ) async {
-    await showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(LocaleKeys.delete_birthday.tr()),
-        content: Text(LocaleKeys.delete_confirmation.tr()),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(LocaleKeys.no.tr()),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              await context.read<HomeViewModel>().deleteBirthday(birthdayId);
-              if (context.mounted) {
-                Navigator.of(dialogContext).pop();
-              }
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(LocaleKeys.birthday_deleted.tr()),
-                  backgroundColor: context.general.colorScheme.tertiary,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.general.colorScheme.error,
-              foregroundColor: context.general.colorScheme.onError,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Text(LocaleKeys.yes.tr()),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _checkUserBirthday() {
-    final user = ProductStateItems.authViewModel.state.user;
-    if (user?.birthday == null) return;
-
-    final now = DateTime.now();
-    final isTodayBirthday =
-        user!.birthday!.day == now.day && user.birthday!.month == now.month;
-
-    if (isTodayBirthday) {
-      final todayStr = DateFormat('yyyy-MM-dd').format(now);
-      final lastShown = ProductStateItems.productPreferences.getString(
-        ProductPreferencesKeys.lastBirthdayGreetingShownDate,
-      );
-
-      if (lastShown != todayStr) {
-        ProductStateItems.productPreferences.setString(
-          ProductPreferencesKeys.lastBirthdayGreetingShownDate,
-          todayStr,
-        );
-        _showBirthdayGreeting();
-      }
-    }
-  }
-
-  void _showBirthdayGreeting() {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Column(
-          children: [
-            const Icon(Icons.cake, size: 64, color: Colors.amber),
-            const SizedBox(height: 16),
-            Text(
-              LocaleKeys.happy_birthday_title.tr(),
-              textAlign: TextAlign.center,
-              style: context.general.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        content: Text(
-          LocaleKeys.happy_birthday_message.tr(),
-          textAlign: TextAlign.center,
-        ),
-        actions: [
-          Center(
-            child: ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(LocaleKeys.ok.tr()),
-            ),
-          ),
-        ],
       ),
     );
   }

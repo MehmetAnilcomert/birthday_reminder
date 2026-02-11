@@ -1,19 +1,19 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:birthday_reminder/feature/birthday/view/mixin/birthday_form_view_mixin.dart';
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
 import 'package:birthday_reminder/feature/birthday/view_model/birthday_form_view_model.dart';
 import 'package:birthday_reminder/feature/birthday/view_model/state/birthday_form_state.dart';
 import 'package:birthday_reminder/product/models/birthday_model.dart';
 import 'package:birthday_reminder/product/state/base/base_state.dart';
 import 'package:birthday_reminder/product/utility/constants/product_padding.dart';
-import 'package:birthday_reminder/product/state/container/product_state_items.dart';
 import 'package:birthday_reminder/product/utility/mixin/error_translator.dart';
 import 'package:birthday_reminder/product/utility/validators.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kartal/kartal.dart';
-import 'package:birthday_reminder/product/cache/product_preferences.dart';
-import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+
+part 'widget/birthday_form_view_widgets.dart';
 
 @RoutePage()
 /// Birthday form view widget for the application.
@@ -29,262 +29,7 @@ class BirthdayFormView extends StatefulWidget {
 }
 
 class _BirthdayFormViewState extends BaseState<BirthdayFormView>
-    with ErrorTranslator {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _surnameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _greetingController = TextEditingController();
-  final _dateController =
-      TextEditingController(); // Controller to show selected date text
-
-  DateTime? _selectedDate;
-  RelationshipType _selectedRelationship = RelationshipType.friend;
-
-  final _phoneIconKey = GlobalKey();
-  final _aiButtonKey = GlobalKey();
-  late TutorialCoachMark _tutorialCoachMark;
-  final List<TargetFocus> _targets = [];
-
-  bool get isEditing => widget.birthday != null;
-
-  bool _isInitialized = false;
-
-  @override
-  void initState() {
-    super.initState();
-    if (isEditing) {
-      _nameController.text = widget.birthday!.name ?? '';
-      _surnameController.text = widget.birthday!.surname ?? '';
-      _phoneController.text = widget.birthday!.phoneNumber ?? '';
-      _greetingController.text = widget.birthday!.greetingMessage ?? '';
-      _selectedDate = widget.birthday!.birthdayDate;
-      // _updateDateController(); // Moved to didChangeDependencies
-      _selectedRelationship =
-          widget.birthday!.relationship ?? RelationshipType.friend;
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_isInitialized && isEditing) {
-      _updateDateController();
-      _isInitialized = true;
-    }
-
-    if (!_isInitialized && !isEditing) {
-      _isInitialized = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _checkAndShowTutorial();
-      });
-    }
-  }
-
-  void _checkAndShowTutorial() {
-    final isShown = ProductStateItems.productPreferences.getBool(
-      key: ProductPreferencesKeys.isTutorialShown,
-    );
-    if (!isShown) {
-      _showInitialPopup();
-    }
-  }
-
-  void _showInitialPopup() {
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text(LocaleKeys.tutorial_welcome_title.tr()),
-        content: Text(
-          LocaleKeys.tutorial_welcome_description.tr(),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _initTutorial();
-              _tutorialCoachMark.show(context: context);
-            },
-            child: Text(LocaleKeys.tutorial_continue.tr()),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _initTutorial() {
-    _targets.clear();
-    _targets.add(
-      TargetFocus(
-        identify: 'phoneIcon',
-        keyTarget: _phoneIconKey,
-        alignSkip: Alignment.topRight,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            builder: (context, controller) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    LocaleKeys.tutorial_phone_title.tr(),
-                    style: context.general.textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    LocaleKeys.tutorial_phone_description.tr(),
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-    );
-
-    _targets.add(
-      TargetFocus(
-        identify: 'aiButton',
-        keyTarget: _aiButtonKey,
-        alignSkip: Alignment.topRight,
-        contents: [
-          TargetContent(
-            align: ContentAlign.top,
-            builder: (context, controller) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    LocaleKeys.tutorial_ai_title.tr(),
-                    style: context.general.textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    LocaleKeys.tutorial_ai_description.tr(),
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-    );
-
-    _tutorialCoachMark = TutorialCoachMark(
-      targets: _targets,
-      colorShadow: context.general.colorScheme.primary,
-      textSkip: LocaleKeys.tutorial_skip.tr(),
-      paddingFocus: 10,
-      opacityShadow: 0.8,
-      onFinish: () {
-        ProductStateItems.productPreferences.setBool(
-          key: ProductPreferencesKeys.isTutorialShown,
-          value: true,
-        );
-      },
-      onSkip: () {
-        ProductStateItems.productPreferences.setBool(
-          key: ProductPreferencesKeys.isTutorialShown,
-          value: true,
-        );
-        return true;
-      },
-    );
-  }
-
-  void _updateDateController() {
-    if (_selectedDate != null) {
-      _dateController.text = DateFormat(
-        'dd MMMM yyyy',
-        context.locale.toString(),
-      ).format(_selectedDate!);
-    }
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _surnameController.dispose();
-    _phoneController.dispose();
-    _greetingController.dispose();
-    _dateController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _selectDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(
-            context,
-          ).copyWith(colorScheme: context.general.colorScheme),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-        _updateDateController();
-      });
-    }
-  }
-
-  void _handleSave(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
-      if (_selectedDate == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(LocaleKeys.please_select_birthday_date.tr()),
-            backgroundColor: context.general.colorScheme.tertiary,
-          ),
-        );
-        return;
-      }
-
-      final user = ProductStateItems.authViewModel.state.user;
-      if (user == null) return;
-
-      final birthday = BirthdayModel(
-        id: widget.birthday?.id ?? '',
-        userId: user.id,
-        name: _nameController.text.trim(),
-        surname: _surnameController.text.trim(),
-        birthdayDate: _selectedDate!,
-        relationship: _selectedRelationship,
-        greetingMessage: _greetingController.text.trim(),
-        phoneNumber: _phoneController.text.trim().isEmpty
-            ? null
-            : _phoneController.text.trim(),
-        createdAt: widget.birthday?.createdAt ?? DateTime.now(),
-        updatedAt: isEditing ? DateTime.now() : null,
-      );
-
-      final viewModel = context.read<BirthdayFormViewModel>();
-      if (isEditing) {
-        viewModel.updateBirthday(birthday, user.email);
-      } else {
-        viewModel.addBirthday(birthday, user.email);
-      }
-    }
-  }
-
+    with ErrorTranslator, BirthdayFormViewMixin {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -299,8 +44,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                       ? LocaleKeys.birthday_updated.tr()
                       : LocaleKeys.birthday_added.tr(),
                 ),
-                backgroundColor:
-                    context.general.colorScheme.primary, // Success color
+                backgroundColor: context.general.colorScheme.primary,
               ),
             );
             context.maybePop(true);
@@ -314,7 +58,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
           }
 
           if (state.generatedMessage != null) {
-            _greetingController.text = state.generatedMessage!;
+            greetingController.text = state.generatedMessage!;
           }
         },
         child: Builder(
@@ -336,81 +80,35 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                 child: SingleChildScrollView(
                   padding: const ProductPadding.allNormal(),
                   child: Form(
-                    key: _formKey,
+                    key: formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Avatar Placeholder Animation
-                        Center(
-                          child: TweenAnimationBuilder<double>(
-                            tween: Tween(begin: 0, end: 1),
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.elasticOut,
-                            builder: (context, value, child) {
-                              return Transform.scale(
-                                scale: value,
-                                child: Container(
-                                  width: 100,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        context
-                                            .general
-                                            .colorScheme
-                                            .primaryContainer,
-                                        context.general.colorScheme.primary,
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: context
-                                            .general
-                                            .colorScheme
-                                            .primary
-                                            .withValues(alpha: 0.3),
-                                        blurRadius: 15,
-                                        offset: const Offset(0, 5),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    isEditing ? Icons.edit : Icons.person_add,
-                                    size: 50,
-                                    color:
-                                        context.general.colorScheme.onPrimary,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                        _BirthdayAvatar(isEditing: isEditing),
                         const SizedBox(height: ProductPadding.large),
 
-                        // Form Fields
-                        _buildTextField(
-                          controller: _nameController,
+                        _BirthdayTextField(
+                          controller: nameController,
                           label: LocaleKeys.name.tr(),
                           icon: Icons.person,
                           validator: Validators.requiredValidator,
+                          translateError: translateError,
                         ),
                         const SizedBox(height: ProductPadding.medium),
-                        _buildTextField(
-                          controller: _surnameController,
+                        _BirthdayTextField(
+                          controller: surnameController,
                           label: LocaleKeys.surname.tr(),
                           icon: Icons.person_outline,
                           validator: Validators.requiredValidator,
+                          translateError: translateError,
                         ),
                         const SizedBox(height: ProductPadding.medium),
 
                         // Date Picker Field
                         TextFormField(
-                          controller: _dateController,
+                          controller: dateController,
                           readOnly: true,
-                          onTap: _selectDate,
+                          onTap: selectDate,
                           decoration: InputDecoration(
                             labelText: LocaleKeys.birthday_date.tr(),
                             prefixIcon: Icon(
@@ -444,7 +142,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                             ),
                           ),
                           validator: (value) {
-                            if (_selectedDate == null) {
+                            if (selectedDate == null) {
                               return LocaleKeys.please_select_birthday_date
                                   .tr();
                             }
@@ -455,7 +153,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
 
                         // Relationship Dropdown
                         DropdownButtonFormField<RelationshipType>(
-                          initialValue: _selectedRelationship,
+                          value: selectedRelationship,
                           decoration: InputDecoration(
                             labelText: LocaleKeys.relationship.tr(),
                             prefixIcon: Icon(
@@ -476,13 +174,13 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                           items: RelationshipType.values.map((type) {
                             return DropdownMenuItem(
                               value: type,
-                              child: Text(_getRelationshipText(type)),
+                              child: Text(getRelationshipText(type)),
                             );
                           }).toList(),
                           onChanged: (value) {
                             if (value != null) {
                               setState(() {
-                                _selectedRelationship = value;
+                                selectedRelationship = value;
                               });
                             }
                           },
@@ -491,7 +189,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
 
                         // Phone Number Field
                         TextFormField(
-                          controller: _phoneController,
+                          controller: phoneController,
                           keyboardType: TextInputType.phone,
                           decoration: InputDecoration(
                             labelText: LocaleKeys.phone_number.tr(),
@@ -501,7 +199,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                               color: context.general.colorScheme.primary,
                             ),
                             suffixIcon: IconButton(
-                              key: _phoneIconKey,
+                              key: phoneIconKey,
                               icon: Icon(
                                 Icons.info_outline,
                                 color: context.general.colorScheme.primary,
@@ -550,13 +248,14 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                         const SizedBox(height: ProductPadding.medium),
                         BlocBuilder<BirthdayFormViewModel, BirthdayFormState>(
                           builder: (context, state) {
-                            return _buildTextField(
-                              controller: _greetingController,
+                            return _BirthdayTextField(
+                              controller: greetingController,
                               label: LocaleKeys.greeting_message.tr(),
                               icon: Icons.message,
                               minLines: 3,
                               maxLines: null,
                               validator: Validators.requiredValidator,
+                              translateError: translateError,
                               suffixIcon: state.aiLoading
                                   ? const SizedBox(
                                       height: 24,
@@ -569,9 +268,9 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                                       ),
                                     )
                                   : IconButton(
-                                      key: _aiButtonKey,
+                                      key: aiButtonKey,
                                       onPressed: () {
-                                        if (_nameController.text.isEmpty) {
+                                        if (nameController.text.isEmpty) {
                                           ScaffoldMessenger.of(
                                             context,
                                           ).showSnackBar(
@@ -593,13 +292,12 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                                         context
                                             .read<BirthdayFormViewModel>()
                                             .suggestGreeting(
-                                              name: _nameController.text.trim(),
-                                              surname: _surnameController.text
+                                              name: nameController.text.trim(),
+                                              surname: surnameController.text
                                                   .trim(),
-                                              relationship:
-                                                  _getRelationshipText(
-                                                    _selectedRelationship,
-                                                  ),
+                                              relationship: getRelationshipText(
+                                                selectedRelationship,
+                                              ),
                                             );
                                       },
                                       icon: Icon(
@@ -621,7 +319,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                               onPressed:
                                   state.status == BirthdayFormStatus.loading
                                   ? null
-                                  : () => _handleSave(context),
+                                  : handleSave,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
                                     context.general.colorScheme.primary,
@@ -689,65 +387,5 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
         ),
       ),
     );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    int? maxLines = 1,
-    int? minLines,
-    String? Function(String?)? validator,
-    Widget? suffixIcon,
-  }) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon, color: context.general.colorScheme.primary),
-        suffixIcon: suffixIcon,
-        filled: true,
-        fillColor: context.general.colorScheme.surfaceContainerHighest
-            .withValues(alpha: 0.3),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: context.general.colorScheme.primary,
-            width: 2,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: context.general.colorScheme.error),
-        ),
-      ),
-      maxLines: maxLines,
-      minLines: minLines,
-      textCapitalization: TextCapitalization.sentences,
-      validator: validator != null
-          ? (value) => translateError(validator(value))
-          : null,
-    );
-  }
-
-  String _getRelationshipText(RelationshipType type) {
-    if (type == RelationshipType.family) {
-      return LocaleKeys.relationship_family.tr();
-    }
-    if (type == RelationshipType.friend) {
-      return LocaleKeys.relationship_friend.tr();
-    }
-    if (type == RelationshipType.colleague) {
-      return LocaleKeys.relationship_colleague.tr();
-    }
-    return LocaleKeys.relationship_other.tr();
   }
 }

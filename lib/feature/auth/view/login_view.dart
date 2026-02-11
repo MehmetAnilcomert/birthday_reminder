@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:birthday_reminder/feature/auth/view/mixin/login_view_mixin.dart';
 import 'package:birthday_reminder/feature/auth/view/widget/auth_background.dart';
 import 'package:birthday_reminder/feature/auth/view/widget/auth_text_field.dart';
 import 'package:birthday_reminder/product/init/language/locale_keys.g.dart';
@@ -25,28 +26,8 @@ class LoginView extends StatefulWidget {
   State<LoginView> createState() => _LoginViewState();
 }
 
-class _LoginViewState extends BaseState<LoginView> with ErrorTranslator {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  void _handleLogin() {
-    if (_formKey.currentState!.validate()) {
-      context.read<AuthViewModel>().signIn(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
-    }
-  }
-
+class _LoginViewState extends BaseState<LoginView>
+    with ErrorTranslator, LoginViewMixin {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthViewModel, AuthState>(
@@ -59,7 +40,6 @@ class _LoginViewState extends BaseState<LoginView> with ErrorTranslator {
             ),
           );
         } else if (state.status == AuthStatus.authenticated) {
-          // Navigate to Home
           context.router.replace(const HomeRoute());
         }
       },
@@ -70,7 +50,7 @@ class _LoginViewState extends BaseState<LoginView> with ErrorTranslator {
               child: Padding(
                 padding: const ProductPadding.allMedium(),
                 child: Form(
-                  key: _formKey,
+                  key: formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -100,7 +80,7 @@ class _LoginViewState extends BaseState<LoginView> with ErrorTranslator {
                       ),
                       const SizedBox(height: ProductPadding.large),
                       AuthTextField(
-                        controller: _emailController,
+                        controller: emailController,
                         labelText: LocaleKeys.email.tr(),
                         prefixIcon: Icons.email,
                         keyboardType: TextInputType.emailAddress,
@@ -109,21 +89,17 @@ class _LoginViewState extends BaseState<LoginView> with ErrorTranslator {
                       ),
                       const SizedBox(height: ProductPadding.medium),
                       AuthTextField(
-                        controller: _passwordController,
+                        controller: passwordController,
                         labelText: LocaleKeys.password.tr(),
                         prefixIcon: Icons.lock,
-                        obscureText: _obscurePassword,
+                        obscureText: obscurePassword,
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePassword
+                            obscurePassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          },
+                          onPressed: toggleObscurePassword,
                         ),
                         validator: (value) =>
                             translateError(Validators.passwordValidator(value)),
@@ -143,7 +119,7 @@ class _LoginViewState extends BaseState<LoginView> with ErrorTranslator {
                         ),
                         onPressed: state.status == AuthStatus.loading
                             ? null
-                            : _handleLogin,
+                            : handleLogin,
                         child: state.status == AuthStatus.loading
                             ? SizedBox(
                                 height: 20,
