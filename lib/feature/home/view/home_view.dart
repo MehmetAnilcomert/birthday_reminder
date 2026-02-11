@@ -64,8 +64,8 @@ class _HomeViewState extends BaseState<HomeView> with HomeViewMixin {
                   ),
                   Positioned(
                     top: 140,
-                    left: 16,
-                    right: 16,
+                    left: ProductPadding.medium,
+                    right: ProductPadding.medium,
                     child: _HomeSearchBar(controller: searchController),
                   ),
                 ],
@@ -96,7 +96,7 @@ class _HomeViewState extends BaseState<HomeView> with HomeViewMixin {
 
   Widget _buildBody(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.only(top: ProductPadding.medium),
       child: BlocBuilder<HomeViewModel, HomeState>(
         builder: (context, state) {
           if (state.status == HomeStatus.loading) {
@@ -113,7 +113,7 @@ class _HomeViewState extends BaseState<HomeView> with HomeViewMixin {
                     size: 64,
                     color: context.general.colorScheme.error,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: ProductPadding.medium),
                   Text(
                     state.errorMessage ?? LocaleKeys.error.tr(),
                     style: context.general.textTheme.bodyLarge?.copyWith(
@@ -139,7 +139,7 @@ class _HomeViewState extends BaseState<HomeView> with HomeViewMixin {
                     size: 64,
                     color: context.general.colorScheme.outlineVariant,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: ProductPadding.medium),
                   Text(
                     LocaleKeys.search_no_results.tr(),
                     style: context.general.textTheme.bodyLarge?.copyWith(
@@ -162,7 +162,12 @@ class _HomeViewState extends BaseState<HomeView> with HomeViewMixin {
               }
             },
             child: ListView.builder(
-              padding: const EdgeInsets.fromLTRB(0, 8, 0, 80),
+              padding: const EdgeInsets.fromLTRB(
+                0,
+                ProductPadding.small,
+                0,
+                80,
+              ),
               itemCount: state.filteredBirthdays.length,
               itemBuilder: (context, index) {
                 final birthday = state.filteredBirthdays[index];

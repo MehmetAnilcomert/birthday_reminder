@@ -74,4 +74,10 @@ class ProductPadding extends EdgeInsets {
 
   /// [ProductPadding.large] is 32.0.
   static const double large = 32;
+
+  /// [ProductPadding.xLarge] is 48.0.
+  static const double xLarge = 48;
+
+  /// [ProductPadding.micro] is 4.0.
+  static const double micro = 4;
 }

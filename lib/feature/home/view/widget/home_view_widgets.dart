@@ -6,8 +6,14 @@ class _HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 180,
-      padding: const EdgeInsets.fromLTRB(24, 60, 24, 40),
+      height: 180, // Sizing can be kept or mapped to a constant if available
+      padding: EdgeInsets.only(
+        left: ProductPadding.normal,
+        right: ProductPadding.normal,
+        top:
+            60, // Maintaining specific layout height/padding for now as it's custom header
+        bottom: 40,
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -18,8 +24,8 @@ class _HomeHeader extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(32),
-          bottomRight: Radius.circular(32),
+          bottomLeft: Radius.circular(ProductPadding.large),
+          bottomRight: Radius.circular(ProductPadding.large),
         ),
         boxShadow: [
           BoxShadow(
@@ -75,9 +81,11 @@ class _HomeHeader extends StatelessWidget {
               }
             },
             style: IconButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.1),
+              backgroundColor: context.general.colorScheme.onPrimary.withValues(
+                alpha: 0.1,
+              ),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(ProductPadding.small),
               ),
             ),
           ),
@@ -96,7 +104,7 @@ class _HomeSearchBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.general.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(ProductPadding.medium),
         boxShadow: [
           BoxShadow(
             color: context.general.colorScheme.shadow.withValues(alpha: 0.1),

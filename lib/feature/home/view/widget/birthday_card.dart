@@ -29,14 +29,16 @@ class BirthdayCard extends StatelessWidget {
       ),
       elevation: 4,
       shadowColor: context.general.colorScheme.shadow.withValues(alpha: 0.1),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(ProductPadding.medium),
+      ),
       child: InkWell(
         onTap: onEdit,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(ProductPadding.medium),
         child: Container(
           padding: const ProductPadding.allMedium(),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(ProductPadding.medium),
             border: isBirthdayToday
                 ? Border.all(
                     color: context.general.colorScheme.primary,
@@ -96,7 +98,7 @@ class BirthdayCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: ProductPadding.micro),
                     Row(
                       children: [
                         Icon(
@@ -104,7 +106,7 @@ class BirthdayCard extends StatelessWidget {
                           size: 14,
                           color: context.general.colorScheme.secondary,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: ProductPadding.micro),
                         Text(
                           DateFormat(
                             'd MMM',
@@ -117,7 +119,7 @@ class BirthdayCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: ProductPadding.micro),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: ProductPadding.small,
@@ -126,7 +128,9 @@ class BirthdayCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color:
                             context.general.colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(
+                          ProductPadding.small,
+                        ),
                       ),
                       child: Text(
                         _getRelationshipText(birthday.relationship!),
@@ -150,7 +154,9 @@ class BirthdayCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: _getDaysLeftColor(context, daysLeft),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        ProductPadding.medium,
+                      ),
                     ),
                     child: Text(
                       _getDaysLeftText(daysLeft),
@@ -227,12 +233,14 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(ProductPadding.small),
       child: Container(
-        padding: const EdgeInsets.all(6),
+        padding: const EdgeInsets.all(
+          6,
+        ), // Maintain 6 for action button padding
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(ProductPadding.small),
         ),
         child: Icon(icon, size: 18, color: color),
       ),
