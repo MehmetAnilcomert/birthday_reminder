@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:birthday_reminder/feature/auth/view/mixin/register_view_mixin.dart';
 import 'package:birthday_reminder/feature/auth/view/widget/auth_background.dart';
 import 'package:birthday_reminder/feature/auth/view/widget/auth_text_field.dart';
 import 'package:birthday_reminder/product/navigation/app_router.gr.dart';
@@ -25,66 +26,8 @@ class RegisterView extends StatefulWidget {
   State<RegisterView> createState() => _RegisterViewState();
 }
 
-class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _surnameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-  final _birthdayController = TextEditingController();
-  DateTime? _selectedBirthday;
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _surnameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    _birthdayController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _selectBirthday(BuildContext context) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime(2000),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      helpText: LocaleKeys.birthday.tr(),
-      builder: (context, child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: context.general.colorScheme,
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null && picked != _selectedBirthday) {
-      setState(() {
-        _selectedBirthday = picked;
-        _birthdayController.text =
-            '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
-      });
-    }
-  }
-
-  Future<void> _handleRegister() async {
-    if (_formKey.currentState!.validate()) {
-      await context.read<AuthViewModel>().signUp(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-        name: _nameController.text.trim(),
-        surname: _surnameController.text.trim(),
-        birthday: _selectedBirthday,
-      );
-    }
-  }
-
+class _RegisterViewState extends BaseState<RegisterView>
+    with ErrorTranslator, RegisterViewMixin {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthViewModel, AuthState>(
@@ -97,7 +40,6 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
             ),
           );
         } else if (state.status == AuthStatus.authenticated) {
-          // Navigate to Home
           await context.router.replace(const HomeRoute());
         }
       },
@@ -108,7 +50,7 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
               child: Padding(
                 padding: const ProductPadding.allMedium(),
                 child: Form(
-                  key: _formKey,
+                  key: formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -130,7 +72,7 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
                       ),
                       const SizedBox(height: ProductPadding.large),
                       AuthTextField(
-                        controller: _nameController,
+                        controller: nameController,
                         labelText: LocaleKeys.name.tr(),
                         prefixIcon: Icons.person,
                         validator: (value) =>
@@ -138,7 +80,7 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
                       ),
                       const SizedBox(height: ProductPadding.medium),
                       AuthTextField(
-                        controller: _surnameController,
+                        controller: surnameController,
                         labelText: LocaleKeys.surname.tr(),
                         prefixIcon: Icons.person_outline,
                         validator: (value) =>
@@ -146,7 +88,7 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
                       ),
                       const SizedBox(height: ProductPadding.medium),
                       AuthTextField(
-                        controller: _emailController,
+                        controller: emailController,
                         labelText: LocaleKeys.email.tr(),
                         prefixIcon: Icons.email,
                         keyboardType: TextInputType.emailAddress,
@@ -155,62 +97,53 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
                       ),
                       const SizedBox(height: ProductPadding.medium),
                       AuthTextField(
-                        controller: _birthdayController,
+                        controller: birthdayController,
                         labelText: LocaleKeys.birthday.tr(),
                         prefixIcon: Icons.cake,
                         readOnly: true,
-                        onTap: () => _selectBirthday(context),
+                        onTap: () => selectBirthday(context),
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.calendar_today),
-                          onPressed: () => _selectBirthday(context),
+                          onPressed: () => selectBirthday(context),
                         ),
                         validator: (value) =>
                             translateError(Validators.birthdayValidator(value)),
                       ),
                       const SizedBox(height: ProductPadding.medium),
                       AuthTextField(
-                        controller: _passwordController,
+                        controller: passwordController,
                         labelText: LocaleKeys.password.tr(),
                         prefixIcon: Icons.lock,
-                        obscureText: _obscurePassword,
+                        obscureText: obscurePassword,
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePassword
+                            obscurePassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          },
+                          onPressed: toggleObscurePassword,
                         ),
                         validator: (value) =>
                             translateError(Validators.passwordValidator(value)),
                       ),
                       const SizedBox(height: ProductPadding.medium),
                       AuthTextField(
-                        controller: _confirmPasswordController,
+                        controller: confirmPasswordController,
                         labelText: LocaleKeys.confirm_password.tr(),
                         prefixIcon: Icons.lock,
-                        obscureText: _obscureConfirmPassword,
+                        obscureText: obscureConfirmPassword,
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscureConfirmPassword
+                            obscureConfirmPassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _obscureConfirmPassword =
-                                  !_obscureConfirmPassword;
-                            });
-                          },
+                          onPressed: toggleObscureConfirmPassword,
                         ),
                         validator: (value) => translateError(
                           Validators.confirmPasswordValidator(
                             value,
-                            _passwordController.text,
+                            passwordController.text,
                           ),
                         ),
                       ),
@@ -229,7 +162,7 @@ class _RegisterViewState extends BaseState<RegisterView> with ErrorTranslator {
                         ),
                         onPressed: state.status == AuthStatus.loading
                             ? null
-                            : _handleRegister,
+                            : handleRegister,
                         child: state.status == AuthStatus.loading
                             ? SizedBox(
                                 height: 20,
