@@ -68,7 +68,8 @@ enum EnvironmentItems {
   firebaseWindowsApiKey,
 
   /// The Firebase windows app ID for accessing services.
-  firebaseWindowsAppId;
+  firebaseWindowsAppId
+  ;
 
   /// Gets the value of the environment item.
   String get value {

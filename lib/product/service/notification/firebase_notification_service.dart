@@ -37,7 +37,7 @@ final class FirebaseNotificationService implements INotificationService {
     );
 
     await _localNotifications.initialize(
-      initSettings,
+      settings: initSettings,
       onDidReceiveNotificationResponse: _handleNotificationResponse,
     );
 
@@ -128,10 +128,10 @@ final class FirebaseNotificationService implements INotificationService {
       }
 
       await flutterLocalNotificationsPlugin.show(
-        message.hashCode,
-        title,
-        body,
-        NotificationDetails(
+        id: message.hashCode,
+        title: title,
+        body: body,
+        notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
             _channelId,
             _channelName,

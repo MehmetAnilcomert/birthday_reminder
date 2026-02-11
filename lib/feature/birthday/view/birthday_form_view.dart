@@ -176,6 +176,10 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
               ),
             );
           }
+
+          if (state.generatedMessage != null) {
+            _greetingController.text = state.generatedMessage!;
+          }
         },
         child: Builder(
           builder: (context) {
@@ -407,12 +411,68 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                           ),
                         ),
                         const SizedBox(height: ProductPadding.medium),
-                        _buildTextField(
-                          controller: _greetingController,
-                          label: LocaleKeys.greeting_message.tr(),
-                          icon: Icons.message,
-                          maxLines: 3,
-                          validator: Validators.requiredValidator,
+                        BlocBuilder<BirthdayFormViewModel, BirthdayFormState>(
+                          builder: (context, state) {
+                            return _buildTextField(
+                              controller: _greetingController,
+                              label: LocaleKeys.greeting_message.tr(),
+                              icon: Icons.message,
+                              minLines: 3,
+                              maxLines: null,
+                              validator: Validators.requiredValidator,
+                              suffixIcon: state.aiLoading
+                                  ? const SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: Padding(
+                                        padding: ProductPadding.allSmall(),
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                    )
+                                  : IconButton(
+                                      onPressed: () {
+                                        if (_nameController.text.isEmpty) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                LocaleKeys.name.tr() +
+                                                    ' ' +
+                                                    LocaleKeys.required_field
+                                                        .tr(),
+                                              ),
+                                              backgroundColor: context
+                                                  .general
+                                                  .colorScheme
+                                                  .error,
+                                            ),
+                                          );
+                                          return;
+                                        }
+                                        context
+                                            .read<BirthdayFormViewModel>()
+                                            .suggestGreeting(
+                                              name: _nameController.text.trim(),
+                                              surname: _surnameController.text
+                                                  .trim(),
+                                              relationship:
+                                                  _getRelationshipText(
+                                                    _selectedRelationship,
+                                                  ),
+                                            );
+                                      },
+                                      icon: Icon(
+                                        Icons.auto_awesome,
+                                        color:
+                                            context.general.colorScheme.primary,
+                                      ),
+                                      tooltip: 'AI Önerisi',
+                                    ),
+                            );
+                          },
                         ),
                         const SizedBox(height: 40),
 
@@ -497,14 +557,17 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
     required TextEditingController controller,
     required String label,
     required IconData icon,
-    int maxLines = 1,
+    int? maxLines = 1,
+    int? minLines,
     String? Function(String?)? validator,
+    Widget? suffixIcon,
   }) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: context.general.colorScheme.primary),
+        suffixIcon: suffixIcon,
         filled: true,
         fillColor: context.general.colorScheme.surfaceContainerHighest
             .withValues(alpha: 0.3),
@@ -529,6 +592,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
         ),
       ),
       maxLines: maxLines,
+      minLines: minLines,
       textCapitalization: TextCapitalization.sentences,
       validator: validator != null
           ? (value) => translateError(validator(value))
