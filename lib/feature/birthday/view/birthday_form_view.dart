@@ -145,7 +145,7 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                           getRelationshipText: getRelationshipText,
                           nameController: nameController,
                           surnameController: surnameController,
-                          selectedRelationship: selectedRelationship,
+                          getSelectedRelationship: () => selectedRelationship,
                         ),
                         const SizedBox(height: 40),
 
