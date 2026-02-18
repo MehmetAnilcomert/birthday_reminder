@@ -112,15 +112,19 @@ class _BirthdayFormViewState extends BaseState<BirthdayFormView>
                         const SizedBox(height: ProductPadding.medium),
 
                         // Relationship dropdown in the form field
-                        _BirthdayRelationshipDropdown(
-                          selectedRelationship: selectedRelationship,
-                          getRelationshipText: getRelationshipText,
-                          onChanged: (value) {
-                            if (value != null) {
-                              setState(() {
-                                selectedRelationship = value;
-                              });
-                            }
+                        StatefulBuilder(
+                          builder: (context, setStateDropdown) {
+                            return _BirthdayRelationshipDropdown(
+                              selectedRelationship: selectedRelationship,
+                              getRelationshipText: getRelationshipText,
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setStateDropdown(() {
+                                    selectedRelationship = value;
+                                  });
+                                }
+                              },
+                            );
                           },
                         ),
                         const SizedBox(height: ProductPadding.medium),

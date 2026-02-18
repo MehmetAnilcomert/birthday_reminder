@@ -47,7 +47,7 @@ final class _BirthdayDatePicker extends StatelessWidget {
         ),
       ),
       validator: (value) {
-        if (selectedDate == null) {
+        if (value == null || value.trim().isEmpty) {
           return LocaleKeys.please_select_birthday_date.tr();
         }
         return null;

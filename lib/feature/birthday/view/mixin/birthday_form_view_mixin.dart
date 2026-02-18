@@ -219,10 +219,8 @@ mixin BirthdayFormViewMixin on BaseState<BirthdayFormView>, ErrorTranslator {
     );
 
     if (picked != null) {
-      setState(() {
-        selectedDate = picked;
-        updateDateController();
-      });
+      selectedDate = picked;
+      updateDateController();
     }
   }
 
