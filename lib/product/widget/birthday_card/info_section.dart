@@ -22,12 +22,14 @@ final class _InfoSection extends StatelessWidget {
         const SizedBox(height: ProductPadding.micro),
         Row(
           children: [
+            // Birthday Icon
             Icon(
               Icons.cake,
               size: 14,
               color: context.general.colorScheme.secondary,
             ),
             const SizedBox(width: ProductPadding.micro),
+            // Date of Birth is here
             Text(
               DateFormat('d MMM', context.locale.toString()).format(
                 birthday.birthdayDate!,
@@ -37,24 +39,25 @@ final class _InfoSection extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-          ],
-        ),
-        const SizedBox(height: ProductPadding.micro),
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: ProductPadding.small,
-            vertical: 2,
-          ),
-          decoration: BoxDecoration(
-            color: context.general.colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(ProductPadding.small),
-          ),
-          child: Text(
-            _getRelationshipText(birthday.relationship!),
-            style: context.general.textTheme.labelSmall?.copyWith(
-              color: context.general.colorScheme.onSurfaceVariant,
+            const SizedBox(width: ProductPadding.small),
+            // Relationship info indicator Container
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: ProductPadding.small,
+                vertical: 2,
+              ),
+              decoration: BoxDecoration(
+                color: context.general.colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(ProductPadding.small),
+              ),
+              child: Text(
+                _getRelationshipText(birthday.relationship!),
+                style: context.general.textTheme.labelSmall?.copyWith(
+                  color: context.general.colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ],
     );
