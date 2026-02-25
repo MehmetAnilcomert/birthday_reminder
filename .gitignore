@@ -49,3 +49,5 @@ app.*.map.json
 .env.*
 assets/env/
 
+# Google Services
+app/google-services.json
