@@ -50,4 +50,4 @@ app.*.map.json
 assets/env/
 
 # Google Services
-app/google-services.json
+android/app/google-services.json
